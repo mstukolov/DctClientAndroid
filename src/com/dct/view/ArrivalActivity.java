@@ -118,7 +118,7 @@ public class ArrivalActivity extends Activity implements View.OnClickListener{
 
         //Кнопка удаления строки
         final Button remove_btn = new Button(this);
-        remove_btn.setText(rowNum.toString());
+        remove_btn.setText("X");
 
         remove_btn.setId(rowNum);
         remove_btn.setOnClickListener(new View.OnClickListener() {

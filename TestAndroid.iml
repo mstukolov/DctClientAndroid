@@ -15,6 +15,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="spring-android-rest-template-1.0.1.RELEASE" level="project" />
+    <orderEntry type="library" name="library-1.0.0" level="project" />
   </component>
 </module>
