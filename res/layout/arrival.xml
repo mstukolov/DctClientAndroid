@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent" android:weightSum="1">
+
+    <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Введите Штрих-код"
+            android:id="@+id/textView" android:layout_weight="0.05" android:textSize="32dp"/>
+
+    <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <EditText
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:id="@+id/inputWindow" android:layout_row="0" android:layout_column="0"
+                android:background="#ffffffff" android:textColor="@android:color/black"
+                android:textIsSelectable="false" android:textSize="26dp"/>
+        <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Добавить"
+                android:id="@+id/add_btn" android:layout_row="1" android:layout_column="0"/>
+    </GridLayout>
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/scrollView"
+                android:layout_width="fill_parent"
+                android:layout_height="249dp"
+                android:background="#DEDEDE" android:layout_weight="0.51">
+        <TableLayout
+                android:id="@+id/TableLayout1"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="#DEDEDE" >
+
+            <TableRow
+                    android:id="@+id/tableRow1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#ffffffff" >
+
+
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:text="ID"
+                        android:textSize="16dp"
+                        android:textStyle="bold" android:paddingRight="15dp" android:paddingLeft="15dp"/>
+
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Номенклатура"
+                        android:textColor="@android:color/black"
+                        android:textSize="16dp"
+                        android:textStyle="bold" android:paddingRight="15dp" android:paddingLeft="15dp"/>
+
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Штрихкод"
+                        android:textColor="@android:color/black"
+                        android:textSize="16dp"
+                        android:textStyle="bold" android:paddingRight="15dp" android:paddingLeft="15dp"/>
+
+                <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:text="Кол-во"
+                        android:textSize="16dp"
+                        android:textStyle="bold" android:layout_column="27"
+                        android:password="false"/>
+            </TableRow>
+
+        </TableLayout>
+    </ScrollView>
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Записать"
+            android:id="@+id/save" android:layout_weight="0.44"/>
+</LinearLayout>
