@@ -45,8 +45,8 @@ public class DbOpenHelper extends SQLiteOpenHelper implements IDatabaseHandler{
     public void addDocumentItem(DocumentItem item) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(KEY_ID, item.getId());
-        values.put(KEY_NAME, item.getName());
+        values.put(KEY_ID, item.getScu());
+        values.put(KEY_NAME, item.getScu());
         values.put(KEY_BARCODE, item.getBarcode());
         values.put(KEY_QTY, item.getQty());
 
@@ -70,8 +70,8 @@ public class DbOpenHelper extends SQLiteOpenHelper implements IDatabaseHandler{
         if (cursor.moveToFirst()) {
             do {
                 DocumentItem item = new DocumentItem();
-                item.setId(cursor.getString(0));
-                item.setName(cursor.getString(1));
+                item.setScu(cursor.getString(0));
+                item.setScu(cursor.getString(1));
                 item.setBarcode(cursor.getString(2));
                 item.setQty(cursor.getString(2));
 
@@ -98,18 +98,18 @@ public class DbOpenHelper extends SQLiteOpenHelper implements IDatabaseHandler{
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(KEY_NAME, item.getName());
+        values.put(KEY_NAME, item.getScu());
         values.put(KEY_BARCODE, item.getBarcode());
 
         return db.update(TABLE_DOCUMENTS, values, KEY_ID + " = ?",
-                new String[] { String.valueOf(item.getId()) });
+                new String[] { String.valueOf(item.getScu()) });
 
     }
 
     @Override
     public void deleteDocumentItem(DocumentItem item) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_DOCUMENTS, KEY_ID + " = ?", new String[] { String.valueOf(item.getId()) });
+        db.delete(TABLE_DOCUMENTS, KEY_ID + " = ?", new String[] { String.valueOf(item.getScu()) });
         db.close();
     }
 

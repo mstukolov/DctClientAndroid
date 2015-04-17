@@ -85,7 +85,7 @@ public class ArrivalActivity extends Activity implements View.OnClickListener{
             TextView barcode = (TextView) mRow.getChildAt(2);
             TextView qty = (TextView) mRow.getChildAt(3);
 
-            document.add(
+           /* document.add(
                     new DocumentItem(id.getText().toString(),
                             scu.getText().toString(),
                             barcode.getText().toString(),
@@ -98,7 +98,7 @@ public class ArrivalActivity extends Activity implements View.OnClickListener{
                             qty.getText().toString()
 
                     )
-            );
+            );*/
 
         }
 

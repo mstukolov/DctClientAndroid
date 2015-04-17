@@ -5,22 +5,24 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.*;
 import com.android.volley.*;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.dct.connection.RequestTask;
-import com.dct.connection.parse.JsonPostArrayRequest;
-import com.dct.db.DbOpenHelper;
+import com.dct.connection.volley.CustomJsonRequest;
 import com.dct.model.DocumentItem;
+import com.dct.model.DocumentLines;
+import com.dct.model.Documnent;
 import com.example.TestAndroid.R;
+import com.google.gson.Gson;
+import com.test.GenerateTestData;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
-import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Stukolov on 11.04.2015.
@@ -48,10 +50,6 @@ public class ExportDataActivity extends Activity implements View.OnClickListener
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setVisibility(View.INVISIBLE);
-
-
-
-
 
     }
     @Override
@@ -86,30 +84,28 @@ public class ExportDataActivity extends Activity implements View.OnClickListener
 
     public void sendArrayJSON() throws JSONException {
 
-        final  String url ="http://192.168.0.114:8080/dct/sendData/";
-        RequestQueue queue = Volley.newRequestQueue(this);
+        List<DocumentLines> lines = new ArrayList<DocumentLines>();
+        lines.add(new DocumentLines("item1", "2222222222", "3", "3333222"));
+        lines.add(new DocumentLines("item2", "111111111", "13", "3333222"));
+        lines.add(new DocumentLines("item3", "5555555555", "32", "3333222"));
 
-        JsonPostArrayRequest req = new JsonPostArrayRequest(url, new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray jsonArray) {
 
-            }
-        }
-                , new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
 
-            }
-        }, packJSONArray());
+        List<Documnent> documnents = new ArrayList<Documnent>();
+        documnents.add(new Documnent("arrival", "3333222", "12/03/2015", lines));
+        documnents.add(new Documnent("shipment", "444", "15/03/2015"));
+        documnents.add(new Documnent("invent", "1111", "22/03/2015"));
 
-        queue.add(req);
-    }
-    public void sendJSON() throws JSONException {
-        final  String url ="http://192.168.0.114:8080/dct/sendData/";
+        String jsonRequest = new Gson().toJson(documnents);
+
+        JSONObject obj = new JSONObject();
+        obj.put("documents", jsonRequest);
+
+        final  String urlArray ="http://192.168.0.114:8080/dct/sendData/";
 
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, url, packJSON(),
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, urlArray, obj,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -122,7 +118,32 @@ public class ExportDataActivity extends Activity implements View.OnClickListener
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                VolleyLog.e("Error: ", error.getMessage());
+                VolleyLog.e("Error Volley: ", error.getMessage());
+            }
+        });
+        queue.add(req);
+        toastMsg("JSON was sent");
+    }
+    public void sendJSON() throws JSONException {
+
+        final  String urlItem ="http://192.168.0.114:8080/dct/sendItem/";
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, urlItem, packJSON(),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            VolleyLog.v("Response:%n %s", response.toString(4));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error Volley: ", error.getMessage());
             }
         });
         queue.add(req);

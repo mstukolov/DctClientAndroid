@@ -5,10 +5,9 @@ package com.dct.model;
  */
 public class DocumentItem {
 
-    private String id;
-    private String barcode;
-    private String name;
-    private String qty;
+    public String scu;
+    public String barcode;
+    public String qty;
 
     private String documentType;
     private String documentNumber;
@@ -16,21 +15,18 @@ public class DocumentItem {
     public DocumentItem() {
     }
 
-    public DocumentItem(String id, String barcode, String name, String qty) {
-        this.id = id;
+    public DocumentItem(String scu, String barcode, String qty) {
+        this.scu = scu;
         this.barcode = barcode;
-        this.name = name;
         this.qty = qty;
-        this.documentType = "arrival";
-        this.documentNumber = "AR-555";
     }
 
-    public String getId() {
-        return id;
+    public String getScu() {
+        return scu;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setScu(String scu) {
+        this.scu = scu;
     }
 
     public String getBarcode() {
@@ -39,14 +35,6 @@ public class DocumentItem {
 
     public void setBarcode(String barcode) {
         this.barcode = barcode;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getQty() {
