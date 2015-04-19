@@ -1,16 +1,15 @@
 package com.dct.view;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.*;
 import com.dct.db.DbOpenHelper;
+import com.dct.model.DocumentLines;
 import com.example.TestAndroid.R;
-import com.test.GenerateTestData;
-import com.dct.model.DocumentItem;
-import com.dct.model.Goods;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +32,10 @@ public class ArrivalActivity extends Activity implements View.OnClickListener{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.arrival);
+
+        Intent intent = getIntent();
+        String docnum = intent.getStringExtra("docnum");
+
 
         scrollView = (ScrollView) findViewById(R.id.scrollView);
         tableLayout = (TableLayout) findViewById(R.id.TableLayout1);
@@ -71,11 +74,11 @@ public class ArrivalActivity extends Activity implements View.OnClickListener{
     public void saveTableLayoutData(){
 
 
-        List<DocumentItem> document = new ArrayList<DocumentItem>();
+        List<DocumentLines> lines = new ArrayList<DocumentLines>();
 
         int total = tableLayout.getChildCount();
 
-        DbOpenHelper db = new DbOpenHelper(this);
+
         System.out.println("Inserting ..");
 
         for (int i = 1; i < total; i++) {
@@ -85,24 +88,31 @@ public class ArrivalActivity extends Activity implements View.OnClickListener{
             TextView barcode = (TextView) mRow.getChildAt(2);
             TextView qty = (TextView) mRow.getChildAt(3);
 
-           /* document.add(
-                    new DocumentItem(id.getText().toString(),
+            lines.add(
+                    new DocumentLines(
                             scu.getText().toString(),
                             barcode.getText().toString(),
-                            qty.getText().toString())
-            );
-            db.addDocumentItem(
-                    new DocumentItem(id.getText().toString(),
-                            scu.getText().toString(),
-                            barcode.getText().toString(),
-                            qty.getText().toString()
-
+                            qty.getText().toString(),
+                            "111222"
                     )
-            );*/
+            );
+
+
+            dbHelper.addDocumentLine(
+                    new DocumentLines(
+                            id.getText().toString(),
+                            scu.getText().toString(),
+                            barcode.getText().toString(),
+                            qty.getText().toString(),
+                            "OR-123"
+                    )
+            );
 
         }
 
         tableLayout.removeViews(1, total - 1);
+
+        List<DocumentLines> lines2 = dbHelper.getAllDocumentLines();
 
     }
     public void addRow(String barcode, Integer rowNum){
@@ -187,5 +197,6 @@ public class ArrivalActivity extends Activity implements View.OnClickListener{
         toast.show();
 
     }
+
 
 }

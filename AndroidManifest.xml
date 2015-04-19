@@ -5,7 +5,9 @@
           android:versionName="1.0">
     <uses-sdk android:minSdkVersion="15"/>
     <uses-permission android:name="android.permission.INTERNET" />
-    <application android:label="@string/app_name" android:icon="@drawable/ic_launcher">
+    <application android:label="@string/app_name"
+                 android:icon="@drawable/ic_launcher"
+                 android:name="com.dct.core.GlobalApplication">
         <activity android:name="com.dct.view.StartActivity"
                   android:label="@string/app_name">
             <uses-permission android:name="android.permission.INTERNET"></uses-permission>
@@ -17,9 +19,12 @@
         <activity android:name="com.dct.view.ArrivalActivity" android:label="Приемка товара"/>
         <activity android:name="com.dct.view.ShipmentActivity" android:label="Shipment"/>
         <activity android:name="com.dct.view.InventoryActivity" android:label="Inventory"/>
+        <activity android:name="com.dct.view.DocHeader" android:label="Создание документа"/>
+
         <activity android:name="com.dct.view.ExportDataActivity" android:label="exportData">
             <uses-permission android:name="android.permission.INTERNET"></uses-permission>
         </activity>
+
 
     </application>
 </manifest>

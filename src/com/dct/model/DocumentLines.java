@@ -4,6 +4,7 @@ package com.dct.model;
  * Created by stukolov_m on 17.04.2015.
  */
 public class DocumentLines {
+    String id;
     String scu;
     String barcode;
     String qty;
@@ -13,6 +14,14 @@ public class DocumentLines {
     }
 
     public DocumentLines(String scu, String barcode, String qty, String docRef) {
+        this.scu = scu;
+        this.barcode = barcode;
+        this.qty = qty;
+        this.docRef = docRef;
+    }
+
+    public DocumentLines(String id, String scu, String barcode, String qty, String docRef) {
+        this.id = id;
         this.scu = scu;
         this.barcode = barcode;
         this.qty = qty;
@@ -51,6 +60,14 @@ public class DocumentLines {
         this.docRef = docRef;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -58,6 +75,7 @@ public class DocumentLines {
 
         DocumentLines that = (DocumentLines) o;
 
+        if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (scu != null ? !scu.equals(that.scu) : that.scu != null) return false;
         if (barcode != null ? !barcode.equals(that.barcode) : that.barcode != null) return false;
         if (qty != null ? !qty.equals(that.qty) : that.qty != null) return false;
@@ -67,7 +85,8 @@ public class DocumentLines {
 
     @Override
     public int hashCode() {
-        int result = scu != null ? scu.hashCode() : 0;
+        int result = id != null ? id.hashCode() : 0;
+        result = 31 * result + (scu != null ? scu.hashCode() : 0);
         result = 31 * result + (barcode != null ? barcode.hashCode() : 0);
         result = 31 * result + (qty != null ? qty.hashCode() : 0);
         result = 31 * result + (docRef != null ? docRef.hashCode() : 0);

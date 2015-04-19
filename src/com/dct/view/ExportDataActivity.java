@@ -8,21 +8,17 @@ import com.android.volley.*;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.dct.connection.volley.CustomJsonRequest;
-import com.dct.model.DocumentItem;
+import com.dct.core.GlobalApplication;
 import com.dct.model.DocumentLines;
 import com.dct.model.Documnent;
 import com.example.TestAndroid.R;
 import com.google.gson.Gson;
-import com.test.GenerateTestData;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Stukolov on 11.04.2015.
@@ -45,7 +41,9 @@ public class ExportDataActivity extends Activity implements View.OnClickListener
 
         Button send_json = (Button) findViewById(R.id.send_json);
         send_json.setOnClickListener(this);
+
         Button send_arr_json = (Button) findViewById(R.id.send_arr_json);
+        send_arr_json.setText(GlobalApplication.getInstance().sendDocuments);
         send_arr_json.setOnClickListener(this);
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -101,7 +99,7 @@ public class ExportDataActivity extends Activity implements View.OnClickListener
         JSONObject obj = new JSONObject();
         obj.put("documents", jsonRequest);
 
-        final  String urlArray ="http://192.168.0.114:8080/dct/sendData/";
+        final  String urlArray = GlobalApplication.getInstance().serverAddress + "sendData/";
 
         RequestQueue queue = Volley.newRequestQueue(this);
 

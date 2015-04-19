@@ -3,26 +3,33 @@
               android:orientation="vertical"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
-              android:weightSum="1" android:background="#ffffee06">
+              android:weightSum="1" android:background="#fffafff8">
     <ImageView
             android:layout_width="694dp"
             android:layout_height="wrap_content"
             android:id="@+id/imageView" android:src="@drawable/logo3"
-            android:layout_weight="0.16" android:paddingRight="310dp"/>
+            android:paddingRight="310dp"/>
     <Button android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Приход товара"
-            android:id="@+id/arrival" android:layout_weight="0.13" android:textSize="32dp" android:textStyle="bold"
+            android:id="@+id/arrival" android:layout_weight="0.22" android:textSize="32dp" android:textStyle="bold"
             android:background="#ffffcd0e"/>
     <Button android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Отгрузка товара"
-            android:id="@+id/ship" android:layout_weight="0.20" android:textSize="32dp" android:textStyle="bold"
+            android:id="@+id/ship" android:layout_weight="0.26" android:textSize="32dp" android:textStyle="bold"
             android:background="#ffffa60f"/>
     <Button android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Инвентаризация"
-            android:id="@+id/invent" android:layout_weight="0.12" android:textSize="32dp" android:textStyle="bold"
+            android:id="@+id/invent" android:layout_weight="0.22" android:textSize="32dp" android:textStyle="bold"
             android:enabled="true" android:background="#ffff6516"/>
     <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Выгрузка данных"
-            android:id="@+id/exportData" android:layout_weight="0.33"/>
+            android:text="Синхронизация"
+            android:id="@+id/exportData" android:layout_weight="0.17" android:textStyle="bold" android:textSize="32dp"
+            android:background="#ffff240d"/>
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Настройки"
+            android:id="@+id/setup_btn" android:layout_weight="0.16" android:textStyle="bold" android:textSize="32dp"
+            android:background="#ffff0a47"/>
 
 
 </LinearLayout>

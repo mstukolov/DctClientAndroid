@@ -3,9 +3,11 @@ package com.dct.view;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import com.dct.core.GlobalApplication;
 import com.example.TestAndroid.R;
 
 public class StartActivity extends Activity implements View.OnClickListener {
@@ -24,6 +26,8 @@ public class StartActivity extends Activity implements View.OnClickListener {
         ship.setOnClickListener(this);
         invent.setOnClickListener(this);
         export.setOnClickListener(this);
+
+        Log.d("helloFromGlobalApplication : ", GlobalApplication.getInstance().helloFromGlobalApplication);
 
     }
 
@@ -50,7 +54,7 @@ public class StartActivity extends Activity implements View.OnClickListener {
     public void goPage(String _page){
         Intent intent = null;
 
-        if(_page.equals("arrival")){intent = new Intent(this, ArrivalActivity.class);}
+        if(_page.equals("arrival")){intent = new Intent(this, DocHeader.class);}
         else if(_page.equals("shipment")){intent = new Intent(this, ShipmentActivity.class);}
         else if(_page.equals("inventory")){intent = new Intent(this, InventoryActivity.class);}
         else if(_page.equals("export")){intent = new Intent(this, ExportDataActivity.class);}
