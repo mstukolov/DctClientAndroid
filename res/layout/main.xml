@@ -11,25 +11,27 @@
             android:paddingRight="310dp"/>
     <Button android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Приход товара"
             android:id="@+id/arrival" android:layout_weight="0.22" android:textSize="32dp" android:textStyle="bold"
-            android:background="#ffffcd0e"/>
+            android:background="@drawable/arrival_btn"/>
+
     <Button android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Отгрузка товара"
             android:id="@+id/ship" android:layout_weight="0.26" android:textSize="32dp" android:textStyle="bold"
-            android:background="#ffffa60f"/>
+            android:background="@drawable/shipment_btn"/>
+
     <Button android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Инвентаризация"
             android:id="@+id/invent" android:layout_weight="0.22" android:textSize="32dp" android:textStyle="bold"
-            android:enabled="true" android:background="#ffff6516"/>
+            android:enabled="true" android:background="@drawable/invent_btn"/>
     <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Синхронизация"
             android:id="@+id/exportData" android:layout_weight="0.17" android:textStyle="bold" android:textSize="32dp"
-            android:background="#ffff240d"/>
+            android:background="@drawable/sync_btn"/>
     <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Настройки"
             android:id="@+id/setup_btn" android:layout_weight="0.16" android:textStyle="bold" android:textSize="32dp"
-            android:background="#ffff0a47"/>
+            android:background="@drawable/setup_btn"/>
 
 
 </LinearLayout>
