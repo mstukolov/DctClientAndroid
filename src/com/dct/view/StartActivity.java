@@ -53,10 +53,12 @@ public class StartActivity extends Activity implements View.OnClickListener {
 
     public void goPage(String _page){
         Intent intent = null;
+        intent = new Intent(this, DocHeader.class);
 
-        if(_page.equals("arrival")){intent = new Intent(this, DocHeader.class);}
-        else if(_page.equals("shipment")){intent = new Intent(this, ShipmentActivity.class);}
-        else if(_page.equals("inventory")){intent = new Intent(this, InventoryActivity.class);}
+        if(_page.equals("arrival")) intent.putExtra("doctype", "arrival");
+        else if(_page.equals("shipment")) intent.putExtra("doctype", "shipment");
+        else if(_page.equals("inventory")) intent.putExtra("doctype", "inventory");
+
         else if(_page.equals("export")){intent = new Intent(this, ExportDataActivity.class);}
 
         startActivity(intent);

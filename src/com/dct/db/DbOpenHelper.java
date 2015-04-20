@@ -48,7 +48,7 @@ public class DbOpenHelper extends SQLiteOpenHelper implements IDatabaseHandler{
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_DOCUMENT_TABLE = "CREATE TABLE " + TABLE_DOCUMENTS + "("
-                + DOC_NUM + " INTEGER PRIMARY KEY,"
+                + DOC_NUM + " TEXT PRIMARY KEY,"
                 + DOC_DATE + " TEXT,"
                 + DOC_TYPE + " TEXT" + ")";
 
@@ -87,6 +87,15 @@ public class DbOpenHelper extends SQLiteOpenHelper implements IDatabaseHandler{
 
         db.insert(TABLE_DOCUMENTS, null, values);
         db.close();
+    }
+    public Boolean findDocumentHeader(String _docnum){
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selectQuery = "SELECT  * FROM " + TABLE_DOCUMENTS + " where docnum = " + _docnum;
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            return true;
+        }
+        return false;
     }
 
     @Override

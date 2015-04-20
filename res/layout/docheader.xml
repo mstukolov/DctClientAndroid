@@ -2,8 +2,21 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
-              android:layout_height="match_parent" android:weightSum="1">
+              android:layout_height="match_parent"
+              android:weightSum="1"
+              android:background="@drawable/setup_btn">
 
+    <TextView
+            android:layout_width="424dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:text="Введите номер документа"
+            android:id="@+id/docHeader" android:layout_weight="0.09"/>
+    <TextView
+            android:layout_width="424dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:id="@+id/docType" android:layout_weight="0.09"/>
 
     <EditText
             android:layout_width="match_parent"
@@ -13,7 +26,10 @@
     <Button
             android:layout_width="296dp"
             android:layout_height="wrap_content"
-            android:text="Создать документ"
-            android:id="@+id/create_document" android:layout_gravity="center_horizontal" android:layout_weight="0.09"
-            android:layout_marginTop="25dp"/>
+            android:text="Начать документ"
+            android:id="@+id/create_document"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="0.09"
+            android:layout_marginTop="25dp"
+            android:background="@drawable/setup_btn"/>
 </LinearLayout>
