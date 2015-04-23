@@ -87,7 +87,7 @@ public class SetupActivity extends Activity {
         shops.add("13 - AAAAA");
         shops.add("14 - ADFFF");
         shops.add("15 - ADFSFF");
-        shops.add("16 - REWUWOI");
+        shops.add("16 - REWUWOI4");
 
         String[] shopsArr = new String[shops.size()];
         shopsArr = shops.toArray(shopsArr);
