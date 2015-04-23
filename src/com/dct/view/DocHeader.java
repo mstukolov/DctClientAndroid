@@ -21,39 +21,47 @@ public class DocHeader extends Activity implements View.OnClickListener{
     public TextView doctypeWidget;
     public DbOpenHelper dbHelper;
 
+    public Intent intent;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.docheader);
 
         //Тип документа из startactivity
-        Intent intent = getIntent();
+        intent = getIntent();
         doctypeWidget = (TextView) findViewById(R.id.docType);
         doctypeWidget.setText(setDocHeader(intent.getStringExtra("doctype")));
 
         docnum = (EditText) findViewById(R.id.docnum);
 
-        Button create_btn = (Button) findViewById(R.id.create_document);
-        create_btn.setOnClickListener(this);
+        Button start_btn = (Button) findViewById(R.id.start_document);
+        start_btn.setOnClickListener(this);
 
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.create_document:
-                createDocument(docnum.getText().toString());
-                Intent  intent = new Intent(this, ArrivalActivity.class);
-                //intent.putExtra("docnum", docnum.getText().toString());
-                startActivity(intent);
+            case R.id.start_document:
+                if(!docnum.getText().toString().equals("")) {
+                    createDocument(docnum.getText().toString());
+                    Intent intent = new Intent(this, ArrivalActivity.class);
+                    intent.putExtra("docnum", docnum.getText().toString());
+                    startActivity(intent);
+                }else{
+                    toastMsg("Set document header number");
+                }
         }
     }
 
     public void createDocument(String _docnum){
-        if(GlobalApplication.getInstance().dbHelper.findDocumentHeader(_docnum))
+        Boolean isDocExist = GlobalApplication.getInstance().dbHelper.findDocumentHeader(_docnum);
+
+        if(!isDocExist)
         {
-            GlobalApplication.getInstance().dbHelper.addDocumentHeader(_docnum, "arrival");
-        }
+            GlobalApplication.getInstance().dbHelper.addDocumentHeader(_docnum, intent.getStringExtra("doctype"));
+        }else {toastMsg("Документ уже существует");}
 
     }
     public void toastMsg(String msg) {
@@ -66,7 +74,7 @@ public class DocHeader extends Activity implements View.OnClickListener{
         switch (str){
             case "arrival": return "Приход";
             case "shipment": return "Отгрузка";
-            case "inventory": return "Инвентаризация";
+            case "setup": return "Инвентаризация";
         }
         return null;
     }

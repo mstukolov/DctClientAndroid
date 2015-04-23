@@ -21,8 +21,8 @@
     <Button
             android:layout_width="356dp"
             android:layout_height="wrap_content"
-            android:text="JSON"
-            android:id="@+id/send_json" android:layout_weight="0.09"/>
+            android:text="Synch Barcode"
+            android:id="@+id/synchBarcodes" android:layout_weight="0.09"/>
     <Button
             android:layout_width="356dp"
             android:layout_height="wrap_content"

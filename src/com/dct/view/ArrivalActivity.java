@@ -1,19 +1,21 @@
 package com.dct.view;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.*;
+import com.dct.core.GlobalApplication;
 import com.dct.db.DbOpenHelper;
 import com.dct.model.DocumentLines;
+import com.dct.model.InventItemBarcode;
+import com.dct.zxing.IntentResult;
 import com.example.TestAndroid.R;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import com.dct.zxing.IntentIntegrator;
 
 /**
  * Created by Stukolov on 10.04.2015.
@@ -28,13 +30,19 @@ public class ArrivalActivity extends Activity implements View.OnClickListener{
 
     DbOpenHelper dbHelper;
 
+    String docnum;
+
+    Integer itemsCount = 0;
+
+    TextView qtyField;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.arrival);
 
         Intent intent = getIntent();
-        String docnum = intent.getStringExtra("docnum");
+        docnum = intent.getStringExtra("docnum");
 
 
         scrollView = (ScrollView) findViewById(R.id.scrollView);
@@ -49,6 +57,9 @@ public class ArrivalActivity extends Activity implements View.OnClickListener{
         Button save_btn = (Button) findViewById(R.id.save);
         save_btn.setOnClickListener(this);
 
+        qtyField = (TextView) findViewById(R.id.qtyText);
+        qtyField.setText("0");
+
         // создаем объект для создания и управления версиями БД
         dbHelper = new DbOpenHelper(this);
 
@@ -59,52 +70,71 @@ public class ArrivalActivity extends Activity implements View.OnClickListener{
         int rowNum = tableLayout.getChildCount();
         switch (v.getId()) {
             case R.id.add_btn:
-                addRow(input.getText().toString(), rowNum);
+                if(checkControlSumEAN13(input.getText().toString())) {
+                    InventItemBarcode searchResult = GlobalApplication.getInstance().dbHelper.findItemBarcode(input.getText().toString());
+                    if(searchResult.getScu() != null)addRow(input.getText().toString(), rowNum);
+                    else
+                    {
+                        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+                        alertDialog.setTitle("Ошибка");
+                        alertDialog.setMessage("Не известный штрих-код");
+                        alertDialog.show();
+
+                    }
+
+                }
+                else{toastMsg("Не правильный штрих-код");}
                 input.getText().clear();
                 break;
             case R.id.inputWindow:
-                addRow(input.getText().toString(), rowNum);
-                input.getText().clear();
+                /*if(checkControlSumEAN13(input.getText().toString())) {addRow(input.getText().toString(), rowNum);}
+                else{toastMsg("Не правильный штрих-код");}
+                */
+                toastMsg("Не правильный штрих-код");
+                IntentIntegrator scanIntegrator = new IntentIntegrator(this);
+                scanIntegrator.initiateScan();
+
+                //input.getText().clear();
                 break;
             case R.id.save:
                 saveTableLayoutData();
                 break;
         }
     }
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+        if (scanningResult != null) {
+            String scanContent = scanningResult.getContents();
+            String scanFormat = scanningResult.getFormatName();
+            input.setText(scanContent);
+
+        }else{
+            Toast toast = Toast.makeText(getApplicationContext(),
+                    "No scan data received!", Toast.LENGTH_SHORT);
+            toast.show();
+        }
+
+    }
+
     public void saveTableLayoutData(){
 
-
-        List<DocumentLines> lines = new ArrayList<DocumentLines>();
-
         int total = tableLayout.getChildCount();
-
 
         System.out.println("Inserting ..");
 
         for (int i = 1; i < total; i++) {
             TableRow mRow = (TableRow) tableLayout.getChildAt(i);
-            TextView id = (TextView) mRow.getChildAt(0);
-            TextView scu = (TextView) mRow.getChildAt(1);
-            TextView barcode = (TextView) mRow.getChildAt(2);
-            TextView qty = (TextView) mRow.getChildAt(3);
+            TextView scu = (TextView) mRow.getChildAt(0);
+            TextView size = (TextView) mRow.getChildAt(1);
 
-            lines.add(
-                    new DocumentLines(
-                            scu.getText().toString(),
-                            barcode.getText().toString(),
-                            qty.getText().toString(),
-                            "111222"
-                    )
-            );
-
+            TextView qty = (TextView) mRow.getChildAt(2);
 
             dbHelper.addDocumentLine(
                     new DocumentLines(
-                            id.getText().toString(),
                             scu.getText().toString(),
-                            barcode.getText().toString(),
-                            qty.getText().toString(),
-                            "OR-123"
+                            size.getText().toString(),
+                            "1",
+                            docnum
                     )
             );
 
@@ -112,19 +142,14 @@ public class ArrivalActivity extends Activity implements View.OnClickListener{
 
         tableLayout.removeViews(1, total - 1);
 
-        List<DocumentLines> lines2 = dbHelper.getAllDocumentLines();
-
+        Intent  intent = new Intent(this, StartActivity.class);
+        startActivity(intent);
     }
     public void addRow(String barcode, Integer rowNum){
 
-        final Random random = new Random();
-        int id = random.nextInt();
-
-
         final TableRow row = new TableRow(this);
 
-        TextView t1, t2, t3, t4;
-
+        TextView t1, t2;
 
         //Кнопка удаления строки
         final Button remove_btn = new Button(this);
@@ -150,37 +175,23 @@ public class ArrivalActivity extends Activity implements View.OnClickListener{
         t2 = new TextView(this);
         t2.setTextColor(Color.BLACK);
 
-        t3 = new TextView(this);
-        t3.setTextColor(Color.BLACK);
 
-        t4 = new TextView(this);
-        t4.setTextColor(Color.BLACK);
-
-
-
-        t1.setText(String.valueOf(id));
-        t2.setText(barcode + "_new");
-        t3.setText(barcode);
-        t4.setText(String.valueOf(1));
+        t1.setText(GlobalApplication.getInstance().dbHelper.findItemBarcode(barcode).getScu());
+        t2.setText(GlobalApplication.getInstance().dbHelper.findItemBarcode(barcode).getSize());
 
 
         t1.setTypeface(null, 1);
         t2.setTypeface(null, 1);
-        t3.setTypeface(null, 1);
-        t4.setTypeface(null, 1);
+
 
         t1.setTextSize(15);
         t2.setTextSize(15);
-        t3.setTextSize(15);
-        t4.setTextSize(15);
 
-        t1.setWidth(100 * dip);
-        t2.setWidth(150 * dip);
-        t1.setPadding(20 * dip, 0, 20 * dip, 0);
+        t1.setWidth(180 * dip);
+        t2.setWidth(50 * dip);
+        t1.setPadding(10 * dip, 0, 20 * dip, 0);
         row.addView(t1);
         row.addView(t2);
-        row.addView(t3);
-        row.addView(t4);
 
         row.addView(remove_btn);
 
@@ -188,7 +199,29 @@ public class ArrivalActivity extends Activity implements View.OnClickListener{
                 TableLayout.LayoutParams.WRAP_CONTENT, TableLayout.LayoutParams.WRAP_CONTENT));
 
         scrollView.fullScroll(View.FOCUS_DOWN);
+        itemsCount++;
+        qtyField.setText(itemsCount.toString());
 
+    }
+    public Boolean checkControlSumEAN13(String barcode){
+        if (barcode.length() < 13) {return false;}
+
+        else {
+                char[] char12digits = barcode.toCharArray();
+                int[] ean13 = {1,3};
+                int sum = 0;
+                for(int i = 0 ; i<char12digits.length-1; i++){
+                    sum += Character.getNumericValue(char12digits[i]) * ean13[i%2];
+                }
+
+                int checksum = 10 - sum%10;
+                if(checksum == 10){ checksum = 0; }
+            int controlCount = Character.getNumericValue(char12digits[12]);
+
+            if(checksum == controlCount){return true;}
+
+            return false;
+        }
     }
 
     public void toastMsg(String msg) {

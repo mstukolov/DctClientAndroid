@@ -11,6 +11,7 @@ import com.android.volley.toolbox.Volley;
 import com.dct.core.GlobalApplication;
 import com.dct.model.DocumentLines;
 import com.dct.model.Documnent;
+import com.dct.model.InventItemBarcode;
 import com.example.TestAndroid.R;
 import com.google.gson.Gson;
 import org.json.JSONArray;
@@ -23,7 +24,7 @@ import java.util.List;
 /**
  * Created by Stukolov on 11.04.2015.
  */
-public class ExportDataActivity extends Activity implements View.OnClickListener{
+public class SynchDataActivity extends Activity implements View.OnClickListener{
 
     ProgressBar progressBar;
     TextView mTextView;
@@ -39,8 +40,8 @@ public class ExportDataActivity extends Activity implements View.OnClickListener
         Button export_btn = (Button) findViewById(R.id.export_run);
         export_btn.setOnClickListener(this);
 
-        Button send_json = (Button) findViewById(R.id.send_json);
-        send_json.setOnClickListener(this);
+        Button synchBarcodes = (Button) findViewById(R.id.synchBarcodes);
+        synchBarcodes.setOnClickListener(this);
 
         Button send_arr_json = (Button) findViewById(R.id.send_arr_json);
         send_arr_json.setText(GlobalApplication.getInstance().sendDocuments);
@@ -58,12 +59,7 @@ public class ExportDataActivity extends Activity implements View.OnClickListener
                 sendMessageToServer();
                 toastMsg("Run started");
 
-            case R.id.send_json:
-                try {
-                    sendJSON();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            case R.id.synchBarcodes: synchItemBarcodes();
             case R.id.send_arr_json:
                 try {
                     sendArrayJSON();
@@ -73,6 +69,21 @@ public class ExportDataActivity extends Activity implements View.OnClickListener
         }
     }
 
+    public void synchItemBarcodes(){
+
+        GlobalApplication.getInstance().dbHelper.deleteAllItemBarcodes();
+
+        InventItemBarcode inventItemBarcode1 = new InventItemBarcode("2000158074364", "469003507-521", "36");
+        InventItemBarcode inventItemBarcode2 = new InventItemBarcode("2000157935376", "469701521-521", "37");
+        InventItemBarcode inventItemBarcode3 = new InventItemBarcode("2000157914395", "469601501-521", "39");
+        InventItemBarcode inventItemBarcode4 = new InventItemBarcode("2000157935383", "469601501-521", "38");
+
+        GlobalApplication.getInstance().dbHelper.addItemBarcode(inventItemBarcode1);
+        GlobalApplication.getInstance().dbHelper.addItemBarcode(inventItemBarcode2);
+        GlobalApplication.getInstance().dbHelper.addItemBarcode(inventItemBarcode3);
+        GlobalApplication.getInstance().dbHelper.addItemBarcode(inventItemBarcode4);
+
+    }
     public void toastMsg(String msg) {
 
         Toast toast = Toast.makeText(this, msg, Toast.LENGTH_LONG);

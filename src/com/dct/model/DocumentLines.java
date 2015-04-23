@@ -6,24 +6,24 @@ package com.dct.model;
 public class DocumentLines {
     String id;
     String scu;
-    String barcode;
+    String size;
     String qty;
     String docRef;
 
     public DocumentLines() {
     }
 
-    public DocumentLines(String scu, String barcode, String qty, String docRef) {
+    public DocumentLines(String scu, String size, String qty, String docRef) {
         this.scu = scu;
-        this.barcode = barcode;
+        this.size = size;
         this.qty = qty;
         this.docRef = docRef;
     }
 
-    public DocumentLines(String id, String scu, String barcode, String qty, String docRef) {
+    public DocumentLines(String id, String scu, String size, String qty, String docRef) {
         this.id = id;
         this.scu = scu;
-        this.barcode = barcode;
+        this.size = size;
         this.qty = qty;
         this.docRef = docRef;
     }
@@ -36,12 +36,12 @@ public class DocumentLines {
         this.scu = scu;
     }
 
-    public String getBarcode() {
-        return barcode;
+    public String getSize() {
+        return size;
     }
 
-    public void setBarcode(String barcode) {
-        this.barcode = barcode;
+    public void setSize(String size) {
+        this.size = size;
     }
 
     public String getQty() {
@@ -77,7 +77,7 @@ public class DocumentLines {
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
         if (scu != null ? !scu.equals(that.scu) : that.scu != null) return false;
-        if (barcode != null ? !barcode.equals(that.barcode) : that.barcode != null) return false;
+        if (size != null ? !size.equals(that.size) : that.size != null) return false;
         if (qty != null ? !qty.equals(that.qty) : that.qty != null) return false;
         return !(docRef != null ? !docRef.equals(that.docRef) : that.docRef != null);
 
@@ -87,7 +87,7 @@ public class DocumentLines {
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
         result = 31 * result + (scu != null ? scu.hashCode() : 0);
-        result = 31 * result + (barcode != null ? barcode.hashCode() : 0);
+        result = 31 * result + (size != null ? size.hashCode() : 0);
         result = 31 * result + (qty != null ? qty.hashCode() : 0);
         result = 31 * result + (docRef != null ? docRef.hashCode() : 0);
         return result;

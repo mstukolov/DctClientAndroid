@@ -6,22 +6,26 @@
     <uses-sdk android:minSdkVersion="15"/>
     <uses-permission android:name="android.permission.INTERNET" />
     <application android:label="@string/app_name"
-                 android:icon="@drawable/ic_launcher"
-                 android:name="com.dct.core.GlobalApplication">
+                 android:icon="@drawable/logo2"
+                 android:name="com.dct.core.GlobalApplication"
+                 android:screenOrientation="portrait">
+
         <activity android:name="com.dct.view.StartActivity"
-                  android:label="@string/app_name">
+                  android:label="@string/app_name"
+                  android:screenOrientation="portrait">
             <uses-permission android:name="android.permission.INTERNET"></uses-permission>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name="com.dct.view.ArrivalActivity" android:label="Приемка товара"/>
-        <activity android:name="com.dct.view.ShipmentActivity" android:label="Shipment"/>
-        <activity android:name="com.dct.view.InventoryActivity" android:label="Inventory"/>
-        <activity android:name="com.dct.view.DocHeader" android:label="Создание документа"/>
+        <activity android:name="com.dct.view.ArrivalActivity" android:label="Приемка товара" android:screenOrientation="portrait"/>
+        <activity android:name="com.dct.view.ShipmentActivity" android:label="Отгрузка товара" android:screenOrientation="portrait"/>
+        <activity android:name="com.dct.view.SetupActivity" android:label="Настройки" android:screenOrientation="portrait"/>
 
-        <activity android:name="com.dct.view.ExportDataActivity" android:label="exportData">
+        <activity android:name="com.dct.view.DocHeader" android:label="Создание документа" android:screenOrientation="portrait"/>
+
+        <activity android:name="com.dct.view.SynchDataActivity" android:label="exportData" android:screenOrientation="portrait">
             <uses-permission android:name="android.permission.INTERNET"></uses-permission>
         </activity>
 

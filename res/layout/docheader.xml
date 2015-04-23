@@ -4,32 +4,34 @@
               android:layout_width="match_parent"
               android:layout_height="match_parent"
               android:weightSum="1"
-              android:background="@drawable/setup_btn">
+              android:background="#ffd4d5d7">
 
     <TextView
             android:layout_width="424dp"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="Введите номер документа"
-            android:id="@+id/docHeader" android:layout_weight="0.09"/>
+            android:id="@+id/docHeader" android:textStyle="bold" style="Arial"
+            android:textColor="@android:color/black"/>
     <TextView
             android:layout_width="424dp"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/docType" android:layout_weight="0.09"/>
+            android:id="@+id/docType" android:textColor="@android:color/black" android:textStyle="bold"/>
 
     <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/docnum" android:layout_weight="0.09" android:background="#ffffffff"
-            android:textColor="@android:color/black" android:textSize="32dp"/>
+            android:textColor="@android:color/black" android:textSize="32dp"
+            android:textStyle="italic"/>
     <Button
             android:layout_width="296dp"
             android:layout_height="wrap_content"
             android:text="Начать документ"
-            android:id="@+id/create_document"
+            android:id="@+id/start_document"
             android:layout_gravity="center_horizontal"
             android:layout_weight="0.09"
             android:layout_marginTop="25dp"
-            android:background="@drawable/setup_btn"/>
+            android:background="@drawable/shipment_btn"/>
 </LinearLayout>
