@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import com.dct.model.DocumentLines;
 import com.dct.model.InventItemBarcode;
 import com.dct.model.Setup;
+import com.dct.model.Shop;
 import org.w3c.dom.Document;
 
 import java.util.ArrayList;
@@ -51,6 +52,9 @@ public class DbOpenHelper extends SQLiteOpenHelper implements IDatabaseHandler{
     private static final String KEY_SHOPINDEX = "shopindex";
     private static final String KEY_SERVERIP = "serverip";
     private static final String KEY_SHOPDIR = "director";
+    //Таблица магазинов
+    private static final String TABLE_SHOP = "shoptable";
+    private static final String KEY_SHOPNAME = "shopname";
 
 
 
@@ -86,10 +90,16 @@ public class DbOpenHelper extends SQLiteOpenHelper implements IDatabaseHandler{
                 + KEY_SHOPDIR +  " TEXT"
                 + ")";
 
+        String CREATE_SHOP_TABLE = "CREATE TABLE " + TABLE_SHOP + "("
+                + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,"
+                + KEY_SHOPINDEX + " TEXT,"
+                + KEY_SHOPNAME+ " TEXT" + ")";
+
         db.execSQL(CREATE_DOCUMENT_TABLE);
         db.execSQL(CREATE_DOCUMENTLINES_TABLE);
         db.execSQL(CREATE_BARCODE_TABLE);
         db.execSQL(CREATE_SETUP_TABLE);
+        db.execSQL(CREATE_SHOP_TABLE);
 
     }
     @Override
@@ -98,6 +108,7 @@ public class DbOpenHelper extends SQLiteOpenHelper implements IDatabaseHandler{
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_DOCUMENT_LINES);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_BARCODE);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SETUP);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_SHOP);
 
         onCreate(db);
     }
@@ -250,6 +261,38 @@ public class DbOpenHelper extends SQLiteOpenHelper implements IDatabaseHandler{
     public void deleteSetup() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_SETUP, null, null);
+        db.close();
+    }
+    public void addShop(String shop) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(KEY_SHOPINDEX, shop);
+        values.put(KEY_SHOPNAME, shop);
+
+        db.insert(TABLE_SHOP, null, values);
+        db.close();
+    }
+
+    public List<String> findAllShops() {
+        List<String> shops = new ArrayList<String>();
+        String selectQuery = "SELECT  * FROM " + TABLE_SHOP;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                String shop = cursor.getString(1);
+                shops.add(shop);
+            } while (cursor.moveToNext());
+        }
+
+        return shops;
+    }
+    public void deleteShops() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_SHOP, null, null);
         db.close();
     }
 

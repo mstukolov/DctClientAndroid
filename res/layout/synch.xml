@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent" android:weightSum="1" android:background="#ffd4d5d7">
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_gravity="center_horizontal"
+            android:layout_weight="0.09">
+    </LinearLayout>
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Синхр. Номенклатуру"
+            android:id="@+id/synchInventBarcode"
+            android:layout_gravity="center_horizontal" android:layout_weight="0.09"
+            android:background="@drawable/shipment_btn"/>
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_weight="0.09">
+    </LinearLayout>
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Выгрузка документов"
+            android:id="@+id/synchDocs" android:layout_weight="0.09" android:background="@drawable/shipment_btn"/>
+
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_weight="0.09">
+    </LinearLayout>
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Синхр. Магазинов"
+            android:id="@+id/synchShops"
+            android:layout_weight="0.08" android:background="@drawable/shipment_btn"/>
+</LinearLayout>

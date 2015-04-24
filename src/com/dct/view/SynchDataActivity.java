@@ -1,6 +1,7 @@
 package com.dct.view;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.*;
@@ -26,41 +27,43 @@ import java.util.List;
  */
 public class SynchDataActivity extends Activity implements View.OnClickListener{
 
-    ProgressBar progressBar;
-    TextView mTextView;
     EditText mEditText;
 
     JSONObject jsonObject;
 
+    private ProgressDialog progress;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.export);
+        setContentView(R.layout.synch);
 
-        Button export_btn = (Button) findViewById(R.id.export_run);
-        export_btn.setOnClickListener(this);
+        Button synchInventBarcode_btn = (Button) findViewById(R.id.synchInventBarcode);
+        synchInventBarcode_btn.setOnClickListener(this);
 
-        Button synchBarcodes = (Button) findViewById(R.id.synchBarcodes);
-        synchBarcodes.setOnClickListener(this);
+        Button synchDocs_btn = (Button) findViewById(R.id.synchDocs);
+        synchDocs_btn.setOnClickListener(this);
 
-        Button send_arr_json = (Button) findViewById(R.id.send_arr_json);
-        send_arr_json.setText(GlobalApplication.getInstance().sendDocuments);
-        send_arr_json.setOnClickListener(this);
+        Button synchShops_btn = (Button) findViewById(R.id.synchShops);
+        synchShops_btn.setOnClickListener(this);
 
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.INVISIBLE);
+        progress = new ProgressDialog(this);
+        progress.setMessage("Downloading Music :) ");
+        progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progress.setIndeterminate(true);
 
     }
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.export_run:
+            case R.id.synchInventBarcode:
 
-                sendMessageToServer();
+                //sendMessageToServer();
                 toastMsg("Run started");
 
-            case R.id.synchBarcodes: synchItemBarcodes();
-            case R.id.send_arr_json:
+            case R.id.synchDocs: synchItemBarcodes();
+
+            case R.id.synchShops:
                 try {
                     sendArrayJSON();
                 } catch (JSONException e) {
@@ -68,7 +71,37 @@ public class SynchDataActivity extends Activity implements View.OnClickListener{
                 }
         }
     }
+    public void open(View view){
+        progress.setMessage("Downloading Music :) ");
+        progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+        progress.setIndeterminate(true);
+        progress.show();
 
+        final int totalProgressTime = 100;
+
+        final Thread t = new Thread(){
+
+            @Override
+            public void run(){
+
+                int jumpTime = 0;
+                while(jumpTime < totalProgressTime){
+                    try {
+                        sleep(200);
+                        jumpTime += 5;
+                        progress.setProgress(jumpTime);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+
+                }
+
+            }
+        };
+        t.start();
+
+    }
     public void synchItemBarcodes(){
 
         GlobalApplication.getInstance().dbHelper.deleteAllItemBarcodes();

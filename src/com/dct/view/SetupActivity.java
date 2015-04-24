@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.*;
 import com.dct.core.GlobalApplication;
 import com.dct.model.Setup;
+import com.dct.model.Shop;
 import com.example.TestAndroid.R;
 
 import java.util.ArrayList;
@@ -23,6 +24,8 @@ public class SetupActivity extends Activity {
     TextView director, serverIP;
     Spinner spinner;
     Button save_btn;
+
+    List<String> shops;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +60,10 @@ public class SetupActivity extends Activity {
         save_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                GlobalApplication.getInstance().dbHelper.deleteShops();
+                generateShops();
+
                 Setup setup = new Setup(spinner.getSelectedItem().toString(),
                                         spinner.getSelectedItem().toString(),
                                         director.getText().toString(),
@@ -75,24 +82,32 @@ public class SetupActivity extends Activity {
 
     }
 
-
-    public Setup baseSetup(){
-        Setup setup = new Setup("56", "Люсиновская", "Волкова А.", "192.168.0.114");
-
-        return setup;
-    }
     public String[] allShops(){
-        List<String> shops = new ArrayList<>();
-        shops.add("12 - HHHHH");
-        shops.add("13 - AAAAA");
-        shops.add("14 - ADFFF");
-        shops.add("15 - ADFSFF");
-        shops.add("16 - REWUWOI4");
+        shops = GlobalApplication.getInstance().dbHelper.findAllShops();
 
         String[] shopsArr = new String[shops.size()];
         shopsArr = shops.toArray(shopsArr);
         return shopsArr;
 
+    }
+    public void generateShops(){
+        shops = new ArrayList<>();
+        shops.add("Авиамоторная №47");
+        shops.add("Магазин Академ-Парк СПб №67");
+        shops.add("Магазин Бабушкинская №48\n");
+        shops.add("Магазин Белорусская №23\n");
+        shops.add("Магазин Василеостровский СПб №61\n");
+        shops.add("Магазин Владимирский СПб №64\n");
+        shops.add("Магазин Г. Кузнецова №10\n");
+        shops.add("Магазин Гринвич Екат №65\n");
+        shops.add("Магазин Золотой Вавилон №49\n");
+        shops.add("Магазин Июнь СПб №60\n");
+        shops.add("Магазин Королев №45\n");
+        shops.add("Магазин Маросейка №57\n");
+
+        for(String shop : shops){
+            GlobalApplication.getInstance().dbHelper.addShop(shop);
+        }
     }
 }
 
