@@ -12,7 +12,7 @@ public class GlobalApplication extends Application {
     public String sendDocuments = "Export Documents";
 
     //connection setup
-    public String serverAddress = "http://192.168.1.4:8080/dct/";
+    public String serverAddress = "http://192.168.0.114:8080/dct/";
 
     //database initialization
     public DbOpenHelper dbHelper;

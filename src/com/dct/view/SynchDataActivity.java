@@ -1,26 +1,27 @@
 package com.dct.view;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.*;
 import com.android.volley.*;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+import com.android.volley.toolbox.*;
 import com.dct.core.GlobalApplication;
+import com.dct.model.Document;
 import com.dct.model.DocumentLines;
-import com.dct.model.Documnent;
 import com.dct.model.InventItemBarcode;
 import com.example.TestAndroid.R;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Stukolov on 11.04.2015.
@@ -31,7 +32,10 @@ public class SynchDataActivity extends Activity implements View.OnClickListener{
 
     JSONObject jsonObject;
 
-    private ProgressDialog progress;
+    List<InventItemBarcode> items = new ArrayList<>();
+
+    private ProgressBar progressBar;
+    private TextView synchStatus;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,16 +45,16 @@ public class SynchDataActivity extends Activity implements View.OnClickListener{
         Button synchInventBarcode_btn = (Button) findViewById(R.id.synchInventBarcode);
         synchInventBarcode_btn.setOnClickListener(this);
 
+        Button remove_docs = (Button) findViewById(R.id.remove_docs);
+        remove_docs.setOnClickListener(this);
+
         Button synchDocs_btn = (Button) findViewById(R.id.synchDocs);
         synchDocs_btn.setOnClickListener(this);
 
         Button synchShops_btn = (Button) findViewById(R.id.synchShops);
         synchShops_btn.setOnClickListener(this);
 
-        progress = new ProgressDialog(this);
-        progress.setMessage("Downloading Music :) ");
-        progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progress.setIndeterminate(true);
+        synchStatus = (TextView) findViewById(R.id.synchStatus);
 
     }
     @Override
@@ -58,96 +62,93 @@ public class SynchDataActivity extends Activity implements View.OnClickListener{
         switch (v.getId()) {
             case R.id.synchInventBarcode:
 
-                //sendMessageToServer();
-                toastMsg("Run started");
+                synchStatus.setText("Start downloading....");
+                downloadInventItemBarcodeDataServer();
 
-            case R.id.synchDocs: synchItemBarcodes();
-
-            case R.id.synchShops:
+            case R.id.synchDocs:
                 try {
-                    sendArrayJSON();
+                    uploadDocumentsToServer();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
+            case R.id.remove_docs: removeAllDocuments();
+            case R.id.synchShops:
+                /*try {
+                    sendArrayJSON();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }*/
         }
     }
-    public void open(View view){
-        progress.setMessage("Downloading Music :) ");
-        progress.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progress.setIndeterminate(true);
-        progress.show();
 
-        final int totalProgressTime = 100;
-
-        final Thread t = new Thread(){
-
-            @Override
-            public void run(){
-
-                int jumpTime = 0;
-                while(jumpTime < totalProgressTime){
-                    try {
-                        sleep(200);
-                        jumpTime += 5;
-                        progress.setProgress(jumpTime);
-                    } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-
-                }
-
-            }
-        };
-        t.start();
-
+    private void removeAllDocuments() {
+       /* GlobalApplication.getInstance().dbHelper.deleteDocumentsHeader();
+        GlobalApplication.getInstance().dbHelper.deleteAllLines();*/
     }
-    public void synchItemBarcodes(){
+
+    public void startWriteDB(){
+        int i = 0;
 
         GlobalApplication.getInstance().dbHelper.deleteAllItemBarcodes();
 
-        InventItemBarcode inventItemBarcode1 = new InventItemBarcode("2000158074364", "469003507-521", "36");
-        InventItemBarcode inventItemBarcode2 = new InventItemBarcode("2000157935376", "469701521-521", "37");
-        InventItemBarcode inventItemBarcode3 = new InventItemBarcode("2000157914395", "469601501-521", "39");
-        InventItemBarcode inventItemBarcode4 = new InventItemBarcode("2000157935383", "469601501-521", "38");
+        for(InventItemBarcode itemBarcode : items){
+            GlobalApplication.getInstance().dbHelper.addItemBarcode(itemBarcode);
+            i++;
+            synchStatus.setText("Total rows: " + i);
+        }
 
-        GlobalApplication.getInstance().dbHelper.addItemBarcode(inventItemBarcode1);
-        GlobalApplication.getInstance().dbHelper.addItemBarcode(inventItemBarcode2);
-        GlobalApplication.getInstance().dbHelper.addItemBarcode(inventItemBarcode3);
-        GlobalApplication.getInstance().dbHelper.addItemBarcode(inventItemBarcode4);
-
-    }
-    public void toastMsg(String msg) {
-
-        Toast toast = Toast.makeText(this, msg, Toast.LENGTH_LONG);
-        toast.show();
-
+        synchStatus.setText("Finish write DB!");
     }
 
-    public void sendArrayJSON() throws JSONException {
-
-        List<DocumentLines> lines = new ArrayList<DocumentLines>();
-        lines.add(new DocumentLines("item1", "2222222222", "3", "3333222"));
-        lines.add(new DocumentLines("item2", "111111111", "13", "3333222"));
-        lines.add(new DocumentLines("item3", "5555555555", "32", "3333222"));
 
 
 
-        List<Documnent> documnents = new ArrayList<Documnent>();
-        documnents.add(new Documnent("arrival", "3333222", "12/03/2015", lines));
-        documnents.add(new Documnent("shipment", "444", "15/03/2015"));
-        documnents.add(new Documnent("invent", "1111", "22/03/2015"));
 
-        String jsonRequest = new Gson().toJson(documnents);
+    public void downloadInventItemBarcodeDataServer(){
 
+        final  String url = GlobalApplication.getInstance().serverAddress + "inventItemBarcodeData/";
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        System.out.println("Get data from server: " + response.length());
+                        Type type = new TypeToken<List<InventItemBarcode>>(){}.getType();
+                        items = new Gson().fromJson(response, type);
+                        synchStatus.setText("End uploading");
+                        startWriteDB();
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error Volley DCT-SERVER: ", error.getMessage());
+                synchStatus.setText("Error uploading");
+            }
+        });
+
+        queue.add(stringRequest);
+    }
+
+    public void uploadDocumentsToServer() throws JSONException {
+
+        final  String url = GlobalApplication.getInstance().serverAddress + "uploadDocuments/";
+        List<Document> documents = GlobalApplication.getInstance().dbHelper.findAllDocumentsHeader();
+
+        for(Document header : documents){
+            header.setLines(GlobalApplication.getInstance().dbHelper.findDocumentHeaderLines(header));
+        }
+
+        String jsonRequest = new Gson().toJson(documents);
         JSONObject obj = new JSONObject();
         obj.put("documents", jsonRequest);
-
-        final  String urlArray = GlobalApplication.getInstance().serverAddress + "sendData/";
+        obj.put("shopindex", "56");
 
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, urlArray, obj,
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, url, obj,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -162,71 +163,9 @@ public class SynchDataActivity extends Activity implements View.OnClickListener{
             public void onErrorResponse(VolleyError error) {
                 VolleyLog.e("Error Volley: ", error.getMessage());
             }
+
         });
         queue.add(req);
-        toastMsg("JSON was sent");
-    }
-    public void sendJSON() throws JSONException {
-
-        final  String urlItem ="http://192.168.0.114:8080/dct/sendItem/";
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-
-        JsonObjectRequest req = new JsonObjectRequest(Request.Method.POST, urlItem, packJSON(),
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
-                            VolleyLog.v("Response:%n %s", response.toString(4));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                VolleyLog.e("Error Volley: ", error.getMessage());
-            }
-        });
-        queue.add(req);
-
-        toastMsg("JSON was sent");
-    }
-    public JSONObject packJSON() throws JSONException {
-
-        jsonObject = new JSONObject();
-        jsonObject.put("scu", "SCU_153");
-        jsonObject.put("barcode", new Integer(550100));
-        jsonObject.put("qty", new Double(5));
-
-        return  jsonObject;
-    }
-
-    public JSONArray packJSONArray() throws JSONException {
-
-        JSONArray jsonArray = new JSONArray();
-
-        JSONObject jsonObject1 = new JSONObject();
-        jsonObject.put("scu", "SCU_153");
-        jsonObject.put("barcode", new Integer(550100));
-        jsonObject.put("qty", new Double(5));
-
-        JSONObject jsonObject2 = new JSONObject();
-        jsonObject.put("scu", "SCU_155");
-        jsonObject.put("barcode", new Integer(120100));
-        jsonObject.put("qty", new Double(15));
-
-        JSONObject jsonObject3 = new JSONObject();
-        jsonObject.put("scu", "SCU_233");
-        jsonObject.put("barcode", new Integer(333100));
-        jsonObject.put("qty", new Double(2));
-
-
-        jsonArray.put(jsonObject1);
-        jsonArray.put(jsonObject2);
-        jsonArray.put(jsonObject3);
-
-        return  jsonArray;
     }
 
     public void sendMessageToServer(){
@@ -251,5 +190,9 @@ public class SynchDataActivity extends Activity implements View.OnClickListener{
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
 
+    }
+    public void toastMsg(String msg) {
+        Toast toast = Toast.makeText(this, msg, Toast.LENGTH_LONG);
+        toast.show();
     }
 }

@@ -5,22 +5,22 @@ import java.util.List;
 /**
  * Created by stukolov_m on 17.04.2015.
  */
-public class Documnent {
+public class Document {
     String docType;
     String docNum;
     String docDate;
     List<DocumentLines> lines;
 
-    public Documnent() {
+    public Document() {
     }
 
-    public Documnent(String docType, String docNum, String docDate) {
+    public Document(String docType, String docNum, String docDate) {
         this.docType = docType;
         this.docNum = docNum;
         this.docDate = docDate;
     }
 
-    public Documnent(String docType, String docNum, String docDate, List<DocumentLines> lines) {
+    public Document(String docType, String docNum, String docDate, List<DocumentLines> lines) {
         this.docType = docType;
         this.docNum = docNum;
         this.docDate = docDate;
@@ -61,7 +61,7 @@ public class Documnent {
 
     @Override
     public String toString() {
-        return "Documnent{" +
+        return "Document{" +
                 "docType='" + docType + '\'' +
                 ", docNum='" + docNum + '\'' +
                 ", docDate='" + docDate + '\'' +
@@ -73,7 +73,7 @@ public class Documnent {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Documnent documnent = (Documnent) o;
+        Document documnent = (Document) o;
 
         if (docType != null ? !docType.equals(documnent.docType) : documnent.docType != null) return false;
         if (docNum != null ? !docNum.equals(documnent.docNum) : documnent.docNum != null) return false;

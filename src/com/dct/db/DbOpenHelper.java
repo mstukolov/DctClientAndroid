@@ -5,12 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import com.dct.model.DocumentLines;
-import com.dct.model.InventItemBarcode;
-import com.dct.model.Setup;
-import com.dct.model.Shop;
-import org.w3c.dom.Document;
+import com.dct.model.*;
 
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -117,7 +115,7 @@ public class DbOpenHelper extends SQLiteOpenHelper implements IDatabaseHandler{
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(DOC_NUM, docnum);
-        values.put(DOC_DATE, new Date().toString());
+        values.put(DOC_DATE, new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date()).toString());
         values.put(DOC_TYPE, type);
 
         db.insert(TABLE_DOCUMENTS, null, values);
@@ -131,6 +129,32 @@ public class DbOpenHelper extends SQLiteOpenHelper implements IDatabaseHandler{
             return true;
         }
         return false;
+    }
+
+    public List<Document> findAllDocumentsHeader() {
+        List<Document> documentList = new ArrayList<Document>();
+        String selectQuery = "SELECT  * FROM " + TABLE_DOCUMENTS;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                Document document = new Document();
+                document.setDocNum(cursor.getString(0));
+                document.setDocDate(cursor.getString(1));
+                document.setDocType(cursor.getString(2));
+
+                documentList.add(document);
+            } while (cursor.moveToNext());
+        }
+
+        return documentList;
+    }
+    public void deleteDocumentsHeader() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_DOCUMENTS, null, null);
+        db.close();
     }
 
     @Override
@@ -154,7 +178,7 @@ public class DbOpenHelper extends SQLiteOpenHelper implements IDatabaseHandler{
 
     @Override
     public List<DocumentLines> getAllDocumentLines() {
-        List<DocumentLines> docList = new ArrayList<DocumentLines>();
+        List<DocumentLines> linesList = new ArrayList<DocumentLines>();
         String selectQuery = "SELECT  * FROM " + TABLE_DOCUMENT_LINES;
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -163,16 +187,39 @@ public class DbOpenHelper extends SQLiteOpenHelper implements IDatabaseHandler{
         if (cursor.moveToFirst()) {
             do {
                 DocumentLines line = new DocumentLines();
-                line.setScu(cursor.getString(0));
+
                 line.setScu(cursor.getString(1));
                 line.setSize(cursor.getString(2));
-                line.setQty(cursor.getString(3));
+                line.setDocRef(cursor.getString(3));
+                line.setQty(cursor.getString(4));
 
-                docList.add(line);
+                linesList.add(line);
             } while (cursor.moveToNext());
         }
 
-        return docList;
+        return linesList;
+    }
+    public List<DocumentLines> findDocumentHeaderLines(Document document) {
+        List<DocumentLines> linesList = new ArrayList<DocumentLines>();
+        String selectQuery = "SELECT  * FROM " + TABLE_DOCUMENT_LINES + " WHERE " + KEY_DOC_REF +"='" + document.getDocNum() + "'";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                DocumentLines line = new DocumentLines();
+
+                line.setScu(cursor.getString(1));
+                line.setSize(cursor.getString(2));
+                line.setDocRef(cursor.getString(3));
+                line.setQty(cursor.getString(4));
+
+                linesList.add(line);
+            } while (cursor.moveToNext());
+        }
+
+        return linesList;
     }
 
     @Override
@@ -215,7 +262,6 @@ public class DbOpenHelper extends SQLiteOpenHelper implements IDatabaseHandler{
         values.put(KEY_BARCODE_ID, itemBarcode.getBarcode());
         values.put(KEY_INVENT, itemBarcode.getScu());
         values.put(KEY_SIZE, itemBarcode.getSize());
-
         db.insert(TABLE_BARCODE, null, values);
         db.close();
     }
