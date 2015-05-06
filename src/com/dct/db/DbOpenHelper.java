@@ -273,7 +273,6 @@ public class DbOpenHelper extends SQLiteOpenHelper implements IDatabaseHandler{
     }
 
     public InventItemBarcode findItemBarcode(String itemBarcode){
-
         String scu = null;
         String size = null;
         try {
@@ -288,18 +287,15 @@ public class DbOpenHelper extends SQLiteOpenHelper implements IDatabaseHandler{
         {
             e.printStackTrace();
         }
-
         return new InventItemBarcode(scu, size);
     }
 
     public void addSetup(Setup setup) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-
         values.put(KEY_SHOPINDEX, setup.getShopIndex());
         values.put(KEY_SERVERIP, setup.getServerIP());
         values.put(KEY_SHOPDIR, setup.getShopDirector());
-
         db.insert(TABLE_SETUP, null, values);
         db.close();
     }
@@ -309,6 +305,21 @@ public class DbOpenHelper extends SQLiteOpenHelper implements IDatabaseHandler{
         db.delete(TABLE_SETUP, null, null);
         db.close();
     }
+
+    public Setup getSetup() {
+        Setup setup = new Setup();
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selectQuery = "SELECT  * FROM " + TABLE_SETUP;
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        cursor.moveToFirst();
+            setup.setShopIndex(cursor.getString(cursor.getColumnIndex(KEY_SHOPINDEX)));
+            setup.setServerIP(cursor.getString(cursor.getColumnIndex(KEY_SERVERIP)));
+            setup.setShopDirector(cursor.getString(cursor.getColumnIndex(KEY_SHOPDIR)));
+        cursor.close();
+        return setup;
+    }
+
     public void addShop(String shop) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();

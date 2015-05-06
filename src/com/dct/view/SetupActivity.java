@@ -37,6 +37,9 @@ public class SetupActivity extends Activity {
         spinner = (Spinner) findViewById(R.id.shops_spinner);
         save_btn = (Button) findViewById(R.id.save_setup_btn);
 
+        director.setText(GlobalApplication.getInstance().dbHelper.getSetup().getShopDirector());
+        serverIP.setText(GlobalApplication.getInstance().dbHelper.getSetup().getServerIP());
+
         ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,
                 android.R.layout.simple_spinner_item,
                  allShops());

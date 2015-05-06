@@ -10,6 +10,7 @@ import com.android.volley.toolbox.*;
 import com.dct.core.GlobalApplication;
 import com.dct.model.Document;
 import com.dct.model.InventItemBarcode;
+import com.dct.model.Shop;
 import com.example.TestAndroid.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -27,14 +28,12 @@ import java.util.Map;
  */
 public class SynchDataActivity extends Activity implements View.OnClickListener{
 
-    EditText mEditText;
-
-    JSONObject jsonObject;
-
     List<InventItemBarcode> items = new ArrayList<>();
+    List<Shop> shops = new ArrayList<>();
 
-    private ProgressBar progressBar;
     private TextView synchStatus;
+    public String serverAddress
+            = "http://" + GlobalApplication.getInstance().dbHelper.getSetup().getServerIP() + "/dct/";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,7 +59,6 @@ public class SynchDataActivity extends Activity implements View.OnClickListener{
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.synchInventBarcode:
-
                 synchStatus.setText("Start downloading....");
                 downloadInventItemBarcodeDataServer();
 
@@ -71,17 +69,8 @@ public class SynchDataActivity extends Activity implements View.OnClickListener{
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-                    /*SyncMainClass syncMainClass = new SyncMainClass();
-                    syncMainClass.execute();*/
-
-
             case R.id.remove_docs: removeAllDocuments();
-            case R.id.synchShops:
-                /*try {
-                    sendArrayJSON();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }*/
+            case R.id.synchShops:  downloadShopsServer();
         }
     }
 
@@ -92,16 +81,13 @@ public class SynchDataActivity extends Activity implements View.OnClickListener{
 
     public void startWriteDB(){
         int i = 0;
-
         GlobalApplication.getInstance().dbHelper.deleteAllItemBarcodes();
-
         for(InventItemBarcode itemBarcode : items){
             GlobalApplication.getInstance().dbHelper.addItemBarcode(itemBarcode);
             i++;
             synchStatus.setText("Total rows: " + i);
         }
-
-        synchStatus.setText("Finish write DB!");
+        synchStatus.setText("Success downloading");
     }
 
 
@@ -117,7 +103,6 @@ public class SynchDataActivity extends Activity implements View.OnClickListener{
                         System.out.println("Get data from server: " + response.length());
                         Type type = new TypeToken<List<InventItemBarcode>>(){}.getType();
                         items = new Gson().fromJson(response, type);
-                        synchStatus.setText("End uploading");
                         startWriteDB();
 
                     }
@@ -131,9 +116,35 @@ public class SynchDataActivity extends Activity implements View.OnClickListener{
 
         queue.add(stringRequest);
     }
+
+    public void downloadShopsServer(){
+        final  String url = serverAddress + "downloadShops/";
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        System.out.println("Get data from server: " + response.length());
+                        Type type = new TypeToken<List<Shop>>(){}.getType();
+                        shops = new Gson().fromJson(response, type);
+                        //startWriteDB();
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error Volley DCT-SERVER: ", error.getMessage());
+                synchStatus.setText("Error uploading");
+            }
+        });
+
+        queue.add(stringRequest);
+
+    }
     public void uploadDocumentsToServerStringRequest() throws JSONException {
 
-        final  String url = GlobalApplication.getInstance().serverAddress + "uploadDocuments/";
+        final  String url = serverAddress + "uploadDocuments/";
         List<Document> documents = GlobalApplication.getInstance().dbHelper.findAllDocumentsHeader();
 
         for(Document header : documents){
@@ -226,58 +237,5 @@ public class SynchDataActivity extends Activity implements View.OnClickListener{
             }
           };
         queue.add(req);
-    }
-
-    public void sendMessageToServer(){
-        // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url ="http://192.168.0.114:8080/dct/displayMessage/" + mEditText.getText();
-
-        // Request a string response from the provided URL.
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        // Display the first 500 characters of the response string.
-                        // mTextView.setText("Response is: "+ response.substring(0,500));
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                //mTextView.setText("That didn't work!");
-            }
-        });
-        // Add the request to the RequestQueue.
-        queue.add(stringRequest);
-
-    }
-    public void toastMsg(String msg) {
-        Toast toast = Toast.makeText(this, msg, Toast.LENGTH_LONG);
-        toast.show();
-    }
-    class SyncMainClass extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            synchStatus.setText("Begin");
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            //TimeUnit.SECONDS.sleep(2);
-            try {
-                uploadDocumentsToServer();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            synchStatus.setText("End");
-        }
     }
 }

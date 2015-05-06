@@ -16,6 +16,9 @@ public class Setup {
         this.serverIP = serverIP;
     }
 
+    public Setup() {
+    }
+
     public String getShopIndex() {
         return shopIndex;
     }

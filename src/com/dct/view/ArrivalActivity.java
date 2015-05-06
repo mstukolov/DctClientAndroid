@@ -93,7 +93,6 @@ public class ArrivalActivity extends Activity implements View.OnClickListener{
                 toastMsg("Не правильный штрих-код");
                 IntentIntegrator scanIntegrator = new IntentIntegrator(this);
                 scanIntegrator.initiateScan();
-
                 //input.getText().clear();
                 break;
             case R.id.save:

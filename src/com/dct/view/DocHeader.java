@@ -10,6 +10,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.dct.core.GlobalApplication;
 import com.dct.db.DbOpenHelper;
+import com.dct.zxing.IntentIntegrator;
+import com.dct.zxing.IntentResult;
 import com.example.TestAndroid.R;
 
 /**
@@ -34,6 +36,7 @@ public class DocHeader extends Activity implements View.OnClickListener{
         doctypeWidget.setText(setDocHeader(intent.getStringExtra("doctype")));
 
         docnum = (EditText) findViewById(R.id.docnum);
+        docnum.setOnClickListener(this);
 
         Button start_btn = (Button) findViewById(R.id.start_document);
         start_btn.setOnClickListener(this);
@@ -52,9 +55,20 @@ public class DocHeader extends Activity implements View.OnClickListener{
                 }else{
                     toastMsg("Set document header number");
                 }
+            case R.id.docnum:
+                IntentIntegrator scanIntegrator = new IntentIntegrator(this);
+                scanIntegrator.initiateScan();
+                break;
         }
     }
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, intent);
+        if (scanningResult != null) {
+            String scanContent = scanningResult.getContents();
+            docnum.setText(scanContent);
+        }
 
+    }
     public void createDocument(String _docnum){
         Boolean isDocExist = GlobalApplication.getInstance().dbHelper.findDocumentHeader(_docnum);
 
