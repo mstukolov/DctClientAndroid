@@ -3,6 +3,7 @@ package com.dct.view;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.*;
 import com.android.volley.*;
@@ -14,9 +15,11 @@ import com.dct.model.Shop;
 import com.example.TestAndroid.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.apache.http.protocol.HTTP;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,6 +37,9 @@ public class SynchDataActivity extends Activity implements View.OnClickListener{
     private TextView synchStatus;
     public String serverAddress
             = "http://" + GlobalApplication.getInstance().dbHelper.getSetup().getServerIP() + "/dct/";
+
+    public String jsonString;
+    public String LOG_TAG = "Response DCT: ";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -70,7 +76,9 @@ public class SynchDataActivity extends Activity implements View.OnClickListener{
                     e.printStackTrace();
                 }
             case R.id.remove_docs: removeAllDocuments();
-            case R.id.synchShops:  downloadShopsServer();
+            case R.id.synchShops:
+                        synchStatus.setText("Start downloading....");
+                        downloadShopsServer();
         }
     }
 
@@ -127,8 +135,15 @@ public class SynchDataActivity extends Activity implements View.OnClickListener{
                     public void onResponse(String response) {
                         System.out.println("Get data from server: " + response.length());
                         Type type = new TypeToken<List<Shop>>(){}.getType();
-                        shops = new Gson().fromJson(response, type);
-                        //startWriteDB();
+
+                        try {
+                            jsonString = new String(response.getBytes("ISO-8859-1"), "UTF-8");
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        shops = new Gson().fromJson(jsonString, type);
+                        startSynchShops(shops);
+                        synchStatus.setText("Success downloading");
 
                     }
                 }, new Response.ErrorListener() {
@@ -137,10 +152,27 @@ public class SynchDataActivity extends Activity implements View.OnClickListener{
                 VolleyLog.e("Error Volley DCT-SERVER: ", error.getMessage());
                 synchStatus.setText("Error uploading");
             }
-        });
+        }){
+                @Override
+                protected Response<String> parseNetworkResponse(NetworkResponse response) {
+              /*      final String TYPE_UTF8_CHARSET = "charset=UTF-8";
 
+                    String type = response.headers.get(HTTP.CONTENT_TYPE);*/
+                    try {
+                        jsonString = new String(response.data, "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    return super.parseNetworkResponse(response);
+            }
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                HashMap<String, String> headers = new HashMap<String, String>();
+                headers.put("Content-Type", "text/plain; charset=utf-8");
+                return headers;
+            }
+        };
         queue.add(stringRequest);
-
     }
     public void uploadDocumentsToServerStringRequest() throws JSONException {
 
@@ -192,7 +224,17 @@ public class SynchDataActivity extends Activity implements View.OnClickListener{
         };
         queue.add(req);
     }
+    public void startSynchShops(List<Shop> shops){
 
+        System.out.println("write shops to DB " + shops.size());
+
+        GlobalApplication.getInstance().dbHelper.deleteShops();
+        for(Shop shop : shops){
+            GlobalApplication.getInstance().dbHelper.addShop(shop);
+        }
+
+
+    }
     public void uploadDocumentsToServer() throws JSONException {
 
         final  String url = GlobalApplication.getInstance().serverAddress + "uploadDocuments/";

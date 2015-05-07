@@ -320,19 +320,19 @@ public class DbOpenHelper extends SQLiteOpenHelper implements IDatabaseHandler{
         return setup;
     }
 
-    public void addShop(String shop) {
+    public void addShop(Shop shop) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        values.put(KEY_SHOPINDEX, shop);
-        values.put(KEY_SHOPNAME, shop);
+        values.put(KEY_SHOPINDEX, shop.getShopindex());
+        values.put(KEY_SHOPNAME, shop.getShopname());
 
         db.insert(TABLE_SHOP, null, values);
         db.close();
     }
 
-    public List<String> findAllShops() {
-        List<String> shops = new ArrayList<String>();
+    public List<Shop> findAllShops() {
+        List<Shop> shops = new ArrayList<Shop>();
         String selectQuery = "SELECT  * FROM " + TABLE_SHOP;
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -340,8 +340,10 @@ public class DbOpenHelper extends SQLiteOpenHelper implements IDatabaseHandler{
 
         if (cursor.moveToFirst()) {
             do {
-                String shop = cursor.getString(1);
-                shops.add(shop);
+                String shopindex = cursor.getString(1);
+                String shopname = cursor.getString(2);
+                shops.add(new Shop(shopindex, shopname));
+
             } while (cursor.moveToNext());
         }
 
