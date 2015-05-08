@@ -16,4 +16,5 @@ public interface IDatabaseHandler {
     public int updateDocumentLine(DocumentLines line);
     public void deleteDocumentLine(DocumentLines line);
     public void deleteAllLines();
+    public void deleteLinesInDocument(String docnum);
 }

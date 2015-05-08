@@ -54,11 +54,20 @@ public class DbOpenHelper extends SQLiteOpenHelper implements IDatabaseHandler{
     private static final String TABLE_SHOP = "shoptable";
     private static final String KEY_SHOPNAME = "shopname";
 
+    private static DbOpenHelper instance;
 
 
+    public static synchronized DbOpenHelper getInstance(Context context)
+    {
+        if (instance == null)
+            instance = new DbOpenHelper(context);
+
+        return instance;
+    }
     public DbOpenHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_DOCUMENT_TABLE = "CREATE TABLE " + TABLE_DOCUMENTS + "("
@@ -199,11 +208,12 @@ public class DbOpenHelper extends SQLiteOpenHelper implements IDatabaseHandler{
 
         return linesList;
     }
-    public List<DocumentLines> findDocumentHeaderLines(Document document) {
+    public synchronized List<DocumentLines> findDocumentHeaderLines(Document document) {
         List<DocumentLines> linesList = new ArrayList<DocumentLines>();
         String selectQuery = "SELECT  * FROM " + TABLE_DOCUMENT_LINES + " WHERE " + KEY_DOC_REF +"='" + document.getDocNum() + "'";
 
-        SQLiteDatabase db = this.getWritableDatabase();
+        SQLiteDatabase db = this.getReadableDatabase();
+
         Cursor cursor = db.rawQuery(selectQuery, null);
 
         if (cursor.moveToFirst()) {
@@ -247,6 +257,13 @@ public class DbOpenHelper extends SQLiteOpenHelper implements IDatabaseHandler{
     public void deleteDocumentLine(DocumentLines line) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_DOCUMENT_LINES, KEY_ID + " = ?", new String[]{String.valueOf(line.getScu())});
+        db.close();
+    }
+
+    @Override
+    public void deleteLinesInDocument(String _docnum) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_DOCUMENT_LINES, KEY_DOC_REF + " = ?", new String[]{String.valueOf(_docnum)});
         db.close();
     }
 

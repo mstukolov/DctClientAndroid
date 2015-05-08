@@ -33,6 +33,7 @@ public class SetupActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.setup);
         context = this;
+        initDatabase();
 
         director = (TextView) findViewById(R.id.editDirector);
         serverIP = (TextView) findViewById(R.id.editServerIP);
@@ -41,7 +42,6 @@ public class SetupActivity extends Activity {
 
         director.setText(GlobalApplication.getInstance().dbHelper.getSetup().getShopDirector());
         serverIP.setText(GlobalApplication.getInstance().dbHelper.getSetup().getServerIP());
-
 
         ArrayAdapter<String> adapter=new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item, allShops());
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -107,6 +107,11 @@ public class SetupActivity extends Activity {
             }
         }
         return index;
+    }
+    public void initDatabase(){
+        Setup setup = new Setup();
+        setup.setServerIP("192.168.0.114:8080");
+        GlobalApplication.getInstance().dbHelper.addSetup(setup);
     }
 }
 

@@ -10,6 +10,7 @@ import com.android.volley.*;
 import com.android.volley.toolbox.*;
 import com.dct.core.GlobalApplication;
 import com.dct.model.Document;
+import com.dct.model.DocumentLines;
 import com.dct.model.InventItemBarcode;
 import com.dct.model.Shop;
 import com.example.TestAndroid.R;
@@ -67,24 +68,34 @@ public class SynchDataActivity extends Activity implements View.OnClickListener{
             case R.id.synchInventBarcode:
                 synchStatus.setText("Start downloading....");
                 downloadInventItemBarcodeDataServer();
+            case R.id.synchShops: downloadShopsServer();
 
             case R.id.synchDocs:
-                synchStatus.setText("Start uploading....");
+
                 try {
                     uploadDocumentsToServerStringRequest();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             case R.id.remove_docs: removeAllDocuments();
-            case R.id.synchShops:
-                        synchStatus.setText("Start downloading....");
-                        downloadShopsServer();
+
+
         }
     }
 
     private void removeAllDocuments() {
-       /* GlobalApplication.getInstance().dbHelper.deleteDocumentsHeader();
-        GlobalApplication.getInstance().dbHelper.deleteAllLines();*/
+       int i = 0;
+       /*while(i < 1000){
+           DocumentLines line = new DocumentLines();
+           line.setDocRef("ARRIVAL-234");
+           line.setQty("1");
+           line.setSize("40");
+           line.setScu("471706209-322");
+           GlobalApplication.getInstance().dbHelper.addDocumentLine(line);
+           i++;
+           synchStatus.setText("Line count= " + i);
+       }*/
+
     }
 
     public void startWriteDB(){
@@ -97,8 +108,6 @@ public class SynchDataActivity extends Activity implements View.OnClickListener{
         }
         synchStatus.setText("Success downloading");
     }
-
-
     public void downloadInventItemBarcodeDataServer(){
 
         final  String url = GlobalApplication.getInstance().serverAddress + "inventItemBarcodeData/";
@@ -111,6 +120,7 @@ public class SynchDataActivity extends Activity implements View.OnClickListener{
                         System.out.println("Get data from server: " + response.length());
                         Type type = new TypeToken<List<InventItemBarcode>>(){}.getType();
                         items = new Gson().fromJson(response, type);
+                        synchStatus.setText("Writing Database.....");
                         startWriteDB();
 
                     }
@@ -124,8 +134,9 @@ public class SynchDataActivity extends Activity implements View.OnClickListener{
 
         queue.add(stringRequest);
     }
-
     public void downloadShopsServer(){
+        synchStatus.setText("Start shops download....");
+
         final  String url = serverAddress + "downloadShops/";
         RequestQueue queue = Volley.newRequestQueue(this);
 
@@ -176,24 +187,26 @@ public class SynchDataActivity extends Activity implements View.OnClickListener{
     }
     public void uploadDocumentsToServerStringRequest() throws JSONException {
 
+        synchStatus.setText("Start send to Server....");
+
         final  String url = serverAddress + "uploadDocuments/";
-        List<Document> documents = GlobalApplication.getInstance().dbHelper.findAllDocumentsHeader();
+        List<Document> documents = GlobalApplication.getInstance().dbHelper.getInstance(this).findAllDocumentsHeader();
 
         for(Document header : documents){
-            header.setLines(GlobalApplication.getInstance().dbHelper.findDocumentHeaderLines(header));
+            header.setLines(GlobalApplication.getInstance().dbHelper.getInstance(this).findDocumentHeaderLines(header));
         }
 
         final String jsonRequest = new Gson().toJson(documents);
-        final JSONObject obj = new JSONObject();
+       /* final JSONObject obj = new JSONObject();
         obj.put("documents", jsonRequest);
-        obj.put("shopindex", "56");
+        obj.put("shopindex", GlobalApplication.getInstance().dbHelper.getSetup().getShopIndex());*/
 
         RequestQueue queue = Volley.newRequestQueue(this);
         Response.Listener<String> jsonListerner = new Response.Listener<String>() {
             @Override
             public void onResponse(String list) {
                 VolleyLog.e("MAXIM Volley Success:  ", list);
-                synchStatus.setText("Success uploading");
+                synchStatus.setText("Send Data success!!!");
             }
         };
 
@@ -210,7 +223,7 @@ public class SynchDataActivity extends Activity implements View.OnClickListener{
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
                 params.put("documents", jsonRequest);
-                params.put("shopindex", "56");
+                params.put("shopindex", GlobalApplication.getInstance().dbHelper.getSetup().getShopIndex());
 
                 return params;
             }
