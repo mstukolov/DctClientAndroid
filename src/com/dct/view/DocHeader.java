@@ -58,11 +58,12 @@ public class DocHeader extends Activity implements View.OnClickListener{
                     toastMsg("Set document header number");
                 }
             }
-            case R.id.docnum: {
+            //Работа с мобильного телефона
+            /*case R.id.docnum: {
                 IntentIntegrator scanIntegrator = new IntentIntegrator(this);
                 scanIntegrator.initiateScan();
                 break;
-            }
+            }*/
         }
     }
     public void checkDocumentCreation(final String docnum){

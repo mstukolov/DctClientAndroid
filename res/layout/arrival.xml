@@ -12,7 +12,7 @@
             android:layout_width="284dp"
             android:layout_height="wrap_content"
             android:text="Введите Штрих-код"
-            android:id="@+id/textView" android:textSize="28dp"
+            android:id="@+id/textView" android:textSize="18dp"
             android:textColor="@android:color/black" style="Arial" android:textStyle="normal|bold"/>
         <TextView
                 android:layout_width="wrap_content"
@@ -27,22 +27,22 @@
             android:layout_height="wrap_content">
         <EditText
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:id="@+id/inputWindow" android:layout_row="0" android:layout_column="0"
                 android:background="#ffffffff" android:textColor="@android:color/black"
                 android:textIsSelectable="false" android:textSize="26dp"/>
-        <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Добавить"
-                android:id="@+id/add_btn" android:layout_row="1" android:layout_column="0"
-                android:background="@drawable/arrival_btn" android:textStyle="bold"/>
+        <!--<Button-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Добавить"-->
+                <!--android:id="@+id/add_btn" android:layout_row="1" android:layout_column="0"-->
+                <!--android:background="@drawable/arrival_btn" android:textStyle="bold"/>-->
     </GridLayout>
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/scrollView"
                 android:layout_width="fill_parent"
-                android:layout_height="249dp"
-                android:background="#DEDEDE" android:layout_weight="0.51">
+                android:layout_height="172dp"
+                android:background="#DEDEDE" android:layout_weight="1.05">
         <TableLayout
                 android:id="@+id/TableLayout1"
                 android:layout_width="fill_parent"
@@ -65,7 +65,7 @@
                         android:textSize="16dp"
                         android:textStyle="bold"
                         android:paddingRight="0dp"
-                        android:paddingLeft="30dp"/>
+                        android:paddingLeft="30dp" android:background="#ffffb51b"/>
 
                 <TextView
                         android:layout_width="40dp"
@@ -75,7 +75,7 @@
                         android:textSize="16dp"
                         android:textStyle="bold"
                         android:paddingRight="15dp"
-                        android:paddingLeft="0dp"/>
+                        android:paddingLeft="0dp" android:background="#ffffb51b"/>
 
 
                 <TextView
@@ -85,7 +85,7 @@
                         android:text="Удалить"
                         android:textSize="16dp"
                         android:textStyle="bold"
-                        android:password="false"/>
+                        android:password="false" android:background="#ffffb51b" android:autoText="true"/>
             </TableRow>
 
         </TableLayout>
@@ -94,7 +94,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Записать"
-            android:id="@+id/save" android:layout_weight="0.44" android:background="@drawable/shipment_btn"
+            android:id="@+id/save" android:background="@drawable/shipment_btn"
             android:textSize="24dp" android:textStyle="bold"/>
 
 </LinearLayout>

@@ -110,7 +110,7 @@ public class SynchDataActivity extends Activity implements View.OnClickListener{
     }
     public void downloadInventItemBarcodeDataServer(){
 
-        final  String url = GlobalApplication.getInstance().serverAddress + "inventItemBarcodeData/";
+        final  String url = serverAddress + "inventItemBarcodeData/";
         RequestQueue queue = Volley.newRequestQueue(this);
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,

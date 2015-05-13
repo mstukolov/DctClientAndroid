@@ -66,7 +66,11 @@ public class SetupActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                Setup setup = new Setup(spinner.getSelectedItem().toString(),
+                String shopName = "00";
+
+                if(spinner.getSelectedItem() != null){shopName = spinner.getSelectedItem().toString();}
+
+                Setup setup = new Setup(shopName,
                                         spinner.getSelectedItem().toString(),
                                         director.getText().toString(),
                                         serverIP.getText().toString()
@@ -110,7 +114,9 @@ public class SetupActivity extends Activity {
     }
     public void initDatabase(){
         Setup setup = new Setup();
-        setup.setServerIP("192.168.0.114:8080");
+        setup.setShopIndex("00");
+        setup.setServerIP("192.168.200.215:8080");
+        //setup.setServerIP("192.168.0.114:8080");
         GlobalApplication.getInstance().dbHelper.addSetup(setup);
     }
 }

@@ -2,20 +2,23 @@ package com.dct.view;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.*;
 import com.dct.core.GlobalApplication;
 import com.dct.db.DbOpenHelper;
 import com.dct.model.DocumentLines;
 import com.dct.model.InventItemBarcode;
+import com.dct.zxing.IntentIntegrator;
 import com.dct.zxing.IntentResult;
 import com.example.TestAndroid.R;
-
-import com.dct.zxing.IntentIntegrator;
 
 /**
  * Created by Stukolov on 10.04.2015.
@@ -49,10 +52,20 @@ public class ArrivalActivity extends Activity implements View.OnClickListener{
         tableLayout = (TableLayout) findViewById(R.id.TableLayout1);
 
         input = (EditText) findViewById(R.id.inputWindow);
-        input.setOnClickListener(this);
+        input.requestFocus();
+        input.setOnKeyListener(new View.OnKeyListener() {
 
-        Button add_btn = (Button) findViewById(R.id.add_btn);
-        add_btn.setOnClickListener(this);
+                                   @Override
+                                   public boolean onKey(View v, int keyCode, KeyEvent event) {
+                                       addRowByScan(tableLayout.getChildCount());
+                                       return false;
+                                   }
+                               }
+            );
+        //input.setOnClickListener(this);
+
+//        Button add_btn = (Button) findViewById(R.id.add_btn);
+//        add_btn.setOnClickListener(this);
 
         Button save_btn = (Button) findViewById(R.id.save);
         save_btn.setOnClickListener(this);
@@ -69,32 +82,32 @@ public class ArrivalActivity extends Activity implements View.OnClickListener{
     public void onClick(View v) {
         int rowNum = tableLayout.getChildCount();
         switch (v.getId()) {
-            case R.id.add_btn:
-                if(checkControlSumEAN13(input.getText().toString())) {
-                    InventItemBarcode searchResult = GlobalApplication.getInstance().dbHelper.findItemBarcode(input.getText().toString());
-                    if(searchResult.getScu() != null)addRow(input.getText().toString(), rowNum);
-                    else
-                    {
-                        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
-                        alertDialog.setTitle("Ошибка");
-                        alertDialog.setMessage("Не известный штрих-код");
-                        alertDialog.show();
-
-                    }
-
-                }
+//            case R.id.add_btn:
+//                if(checkControlSumEAN13(input.getText().toString())) {
+//                    InventItemBarcode searchResult = GlobalApplication.getInstance().dbHelper.findItemBarcode(input.getText().toString());
+//                    if(searchResult.getScu() != null)addRow(input.getText().toString(), rowNum);
+//                    else
+//                    {
+//                        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+//                        alertDialog.setTitle("Ошибка");
+//                        alertDialog.setMessage("Не известный штрих-код");
+//                        alertDialog.show();
+//
+//                    }
+//
+//                }
+//                else{toastMsg("Не правильный штрих-код");}
+//                input.getText().clear();
+//                break;
+            //Работа с мобильного телефона
+           /* case R.id.inputWindow:
+                *//*if(checkControlSumEAN13(input.getText().toString())) {addRow(input.getText().toString(), rowNum);}
                 else{toastMsg("Не правильный штрих-код");}
-                input.getText().clear();
-                break;
-            case R.id.inputWindow:
-                /*if(checkControlSumEAN13(input.getText().toString())) {addRow(input.getText().toString(), rowNum);}
-                else{toastMsg("Не правильный штрих-код");}
-                */
-                toastMsg("Не правильный штрих-код");
+                *//*
                 IntentIntegrator scanIntegrator = new IntentIntegrator(this);
                 scanIntegrator.initiateScan();
                 //input.getText().clear();
-                break;
+                break;*/
             case R.id.save:
                 saveTableLayoutData();
                 break;
@@ -160,6 +173,9 @@ public class ArrivalActivity extends Activity implements View.OnClickListener{
             @Override
             public void onClick(View v) {
                 tableLayout.removeView(row);
+                itemsCount--;
+                qtyField.setText(itemsCount.toString());
+
             }
         });
 
@@ -223,6 +239,27 @@ public class ArrivalActivity extends Activity implements View.OnClickListener{
         }
     }
 
+    public void addRowByScan(Integer _rowNum){
+        if(checkControlSumEAN13(input.getText().toString())) {
+            InventItemBarcode searchResult = GlobalApplication.getInstance().dbHelper.findItemBarcode(input.getText().toString());
+            if(searchResult.getScu() != null) {
+                addRow(input.getText().toString(), _rowNum);
+                getScanSoundOK();
+            }
+                else
+            {
+                AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+                alertDialog.setTitle("Ошибка");
+                alertDialog.setMessage("Не известный штрих-код");
+                alertDialog.show();
+                getScanSoundError();
+            }
+
+        }
+        else{toastMsg("Не правильный штрих-код");}
+        input.getText().clear();
+
+    }
     public void toastMsg(String msg) {
 
         Toast toast = Toast.makeText(this, msg, Toast.LENGTH_LONG);
@@ -230,5 +267,13 @@ public class ArrivalActivity extends Activity implements View.OnClickListener{
 
     }
 
+    public void getScanSoundOK(){
+        MediaPlayer player= MediaPlayer.create(ArrivalActivity.this, R.drawable.beep);
+        player.start();
+    }
+    public void getScanSoundError(){
+        MediaPlayer player= MediaPlayer.create(ArrivalActivity.this, R.drawable.oshibka);
+        player.start();
+    }
 
 }
