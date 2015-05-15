@@ -244,6 +244,7 @@ public class ArrivalActivity extends Activity implements View.OnClickListener{
             InventItemBarcode searchResult = GlobalApplication.getInstance().dbHelper.findItemBarcode(input.getText().toString());
             if(searchResult.getScu() != null) {
                 addRow(input.getText().toString(), _rowNum);
+                input.getText().clear();
                 getScanSoundOK();
             }
                 else
@@ -252,12 +253,10 @@ public class ArrivalActivity extends Activity implements View.OnClickListener{
                 alertDialog.setTitle("Ошибка");
                 alertDialog.setMessage("Не известный штрих-код");
                 alertDialog.show();
+                input.getText().clear();
                 getScanSoundError();
             }
-
         }
-        else{toastMsg("Не правильный штрих-код");}
-        input.getText().clear();
 
     }
     public void toastMsg(String msg) {
