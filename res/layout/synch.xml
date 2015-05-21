@@ -41,12 +41,28 @@
             android:text="Синхр. Магазинов"
             android:id="@+id/synchShops"
             android:layout_weight="0.08" android:background="@drawable/shipment_btn"/>
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_weight="0.09">
+    </LinearLayout>
     <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Очистить документы"
-            android:id="@+id/remove_docs" android:layout_weight="0.09"/>
+            android:text="Пров.соединения"
+            android:id="@+id/test_conn"
+            android:layout_weight="0.08" android:background="@drawable/shipment_btn"/>
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_weight="0.09">
+    </LinearLayout>
+    <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Удалить документы"
+            android:id="@+id/removeDocs"
+            android:layout_weight="0.08" android:background="@drawable/shipment_btn"/>
     <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

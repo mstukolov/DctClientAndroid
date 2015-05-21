@@ -6,13 +6,22 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.*;
+import com.android.volley.*;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.dct.core.GlobalApplication;
 import com.dct.model.Setup;
 import com.dct.model.Shop;
 import com.example.TestAndroid.R;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Stukolov on 10.04.2015.
@@ -24,9 +33,10 @@ public class SetupActivity extends Activity {
     TextView director, serverIP;
     Spinner spinner;
     Button save_btn;
-
     List<Shop> shops;
 
+    public String serverAddress
+            = "http://" + GlobalApplication.getInstance().dbHelper.getSetup().getServerIP() + "/dct/";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -119,5 +129,7 @@ public class SetupActivity extends Activity {
         //setup.setServerIP("192.168.0.114:8080");
         GlobalApplication.getInstance().dbHelper.addSetup(setup);
     }
+
+
 }
 

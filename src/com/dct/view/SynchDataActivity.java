@@ -1,6 +1,9 @@
 package com.dct.view;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -41,17 +44,19 @@ public class SynchDataActivity extends Activity implements View.OnClickListener{
 
     public String jsonString;
     public String LOG_TAG = "Response DCT: ";
+    Context context;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.synch);
+        context = this;
 
         Button synchInventBarcode_btn = (Button) findViewById(R.id.synchInventBarcode);
         synchInventBarcode_btn.setOnClickListener(this);
 
-        Button remove_docs = (Button) findViewById(R.id.remove_docs);
-        remove_docs.setOnClickListener(this);
+        Button test_conn = (Button) findViewById(R.id.test_conn);
+        test_conn.setOnClickListener(this);
 
         Button synchDocs_btn = (Button) findViewById(R.id.synchDocs);
         synchDocs_btn.setOnClickListener(this);
@@ -59,43 +64,58 @@ public class SynchDataActivity extends Activity implements View.OnClickListener{
         Button synchShops_btn = (Button) findViewById(R.id.synchShops);
         synchShops_btn.setOnClickListener(this);
 
+        Button remove_btn = (Button) findViewById(R.id.removeDocs);
+        remove_btn.setOnClickListener(this);
+
         synchStatus = (TextView) findViewById(R.id.synchStatus);
 
     }
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.synchInventBarcode:
+            case R.id.synchInventBarcode: {
                 synchStatus.setText("Start downloading....");
                 downloadInventItemBarcodeDataServer();
-            case R.id.synchShops: downloadShopsServer();
-
+                break;
+            }
+            case R.id.synchShops:
+            {
+                downloadShopsServer();
+                break;
+            }
             case R.id.synchDocs:
-
                 try {
                     uploadDocumentsToServerStringRequest();
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-            case R.id.remove_docs: removeAllDocuments();
-
-
+                break;
+            case R.id.test_conn:
+            {
+                testServerConnection();
+                break;
+            }
+            case R.id.removeDocs:{
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle("Очитстка системы");
+                builder.setMessage("Удалить все документы?");
+                builder.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() { // Кнопка ОК
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        removeAllDocuments();
+                        dialog.dismiss(); // Отпускает диалоговое окно
+                    }
+                });
+                builder.setNegativeButton(android.R.string.cancel, new DialogInterface.OnClickListener() { // Кнопка ОК
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss(); // Отпускает диалоговое окно
+                    }
+                });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }
         }
-    }
-
-    private void removeAllDocuments() {
-       int i = 0;
-       /*while(i < 1000){
-           DocumentLines line = new DocumentLines();
-           line.setDocRef("ARRIVAL-234");
-           line.setQty("1");
-           line.setSize("40");
-           line.setScu("471706209-322");
-           GlobalApplication.getInstance().dbHelper.addDocumentLine(line);
-           i++;
-           synchStatus.setText("Line count= " + i);
-       }*/
-
     }
 
     public void startWriteDB(){
@@ -224,6 +244,7 @@ public class SynchDataActivity extends Activity implements View.OnClickListener{
                 Map<String, String> params = new HashMap<>();
                 params.put("documents", jsonRequest);
                 params.put("shopindex", GlobalApplication.getInstance().dbHelper.getSetup().getShopIndex());
+                params.put("numrecs", String.valueOf(GlobalApplication.getInstance().dbHelper.getAllDocumentLines().size()));
 
                 return params;
             }
@@ -293,4 +314,36 @@ public class SynchDataActivity extends Activity implements View.OnClickListener{
           };
         queue.add(req);
     }
+    public void testServerConnection(){
+        final  String url = serverAddress + "test/";
+        RequestQueue queue = Volley.newRequestQueue(this);
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        getDialog("Соединение установлено!", "Успешно");
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.e("Error Volley DCT-SERVER: ", error.getMessage());
+                getDialog("Сервер не доступен", "Ошибка");
+            }
+        });
+        queue.add(stringRequest);
+    }
+    public AlertDialog getDialog(String message, String title) {
+        AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+        alertDialog.setTitle(title);
+        alertDialog.setMessage(message);
+        alertDialog.show();
+        return  alertDialog;
+    }
+    public void removeAllDocuments(){
+        synchStatus.setText("Началась очистка документов....");
+        GlobalApplication.getInstance().dbHelper.deleteAllLines();
+        GlobalApplication.getInstance().dbHelper.deleteDocumentsHeader();
+        synchStatus.setText("Очистка завершена");
+    }
+
 }

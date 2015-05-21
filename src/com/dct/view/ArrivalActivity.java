@@ -30,19 +30,17 @@ public class ArrivalActivity extends Activity implements View.OnClickListener{
     ScrollView scrollView;
     TableLayout tableLayout;
     EditText input;
-
     DbOpenHelper dbHelper;
-
     String docnum;
-
     Integer itemsCount = 0;
-
     TextView qtyField;
+    Context context;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.arrival);
+        context = this;
 
         Intent intent = getIntent();
         docnum = intent.getStringExtra("docnum");
@@ -58,24 +56,20 @@ public class ArrivalActivity extends Activity implements View.OnClickListener{
                                    @Override
                                    public boolean onKey(View v, int keyCode, KeyEvent event) {
                                        addRowByScan(tableLayout.getChildCount());
-                                       return false;
+                                       return true;
                                    }
                                }
             );
         //input.setOnClickListener(this);
-
-//        Button add_btn = (Button) findViewById(R.id.add_btn);
-//        add_btn.setOnClickListener(this);
+        // Button add_btn = (Button) findViewById(R.id.add_btn);
+        //add_btn.setOnClickListener(this);
 
         Button save_btn = (Button) findViewById(R.id.save);
         save_btn.setOnClickListener(this);
-
         qtyField = (TextView) findViewById(R.id.qtyText);
         qtyField.setText("0");
-
         // создаем объект для создания и управления версиями БД
         dbHelper = new DbOpenHelper(this);
-
     }
 
     @Override
@@ -127,7 +121,6 @@ public class ArrivalActivity extends Activity implements View.OnClickListener{
         }
 
     }
-
     public void saveTableLayoutData(){
 
         int total = tableLayout.getChildCount();
@@ -238,13 +231,13 @@ public class ArrivalActivity extends Activity implements View.OnClickListener{
             return false;
         }
     }
-
     public void addRowByScan(Integer _rowNum){
         if(checkControlSumEAN13(input.getText().toString())) {
             InventItemBarcode searchResult = GlobalApplication.getInstance().dbHelper.findItemBarcode(input.getText().toString());
             if(searchResult.getScu() != null) {
                 addRow(input.getText().toString(), _rowNum);
                 input.getText().clear();
+                input.requestFocus();
                 getScanSoundOK();
             }
                 else
@@ -254,6 +247,7 @@ public class ArrivalActivity extends Activity implements View.OnClickListener{
                 alertDialog.setMessage("Не известный штрих-код");
                 alertDialog.show();
                 input.getText().clear();
+                input.requestFocus();
                 getScanSoundError();
             }
         }
